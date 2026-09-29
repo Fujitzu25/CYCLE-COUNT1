@@ -18,7 +18,7 @@
       .count-sheet-page { max-width: 820px; margin-left: auto; margin-right: auto; }
     }
     @media print {
-      @page { size: Letter portrait; margin: 0.28in; }
+      @page { size: var(--print-page-size, Letter landscape); margin: var(--print-margin, 0.28in); }
       .count-sheet-workspace { background: #fff !important; padding: 0 !important; }
       .count-sheet-page { width: 100% !important; max-width: none !important; padding: 0 !important; margin: 0 0 0.2in !important; }
       .sheet-header { gap: 12px; padding-bottom: 7px; margin-bottom: 5px; }
@@ -68,6 +68,7 @@
     .supplier-selection-action{padding:6px 10px;border:1px solid transparent;border-radius:6px;background:transparent;color:#3d5148;font-size:11px;font-weight:700}
     .supplier-selection-action:hover:not(:disabled){background:#fff;border-color:#dce6e0}
     .supplier-selection-action:disabled{opacity:.45;cursor:default}
+    .supplier-selection-action.reset-printed{color:#b42318}
     .supplier-combine-option{display:inline-flex;align-items:center;justify-content:flex-start;min-height:32px;min-width:0;max-width:100%;overflow:hidden;padding:6px 10px;border:1px solid #c9d8d0;border-radius:7px;background:#fff;color:#30443a;font-size:11px;font-weight:700;text-align:left;text-overflow:ellipsis;white-space:nowrap}
     .supplier-combine-option.is-selected{background:#08785b;border-color:#08785b;color:#fff}
     .supplier-combine-option.is-printed{display:flex;justify-content:space-between;gap:8px;background:#1d4ed8;border-color:#1d4ed8;color:#fff;cursor:default;opacity:1}
@@ -78,6 +79,24 @@
     .developer-card strong{background:none;border:0;padding:0;color:#1a2a26;font-size:12px}
     .developer-card span{font-size:11px;color:#08785b}
     .developer-card p{margin:1px 0 0;color:#66736c;font-size:12px;line-height:1.4}
+    .product-lookup-form{max-width:900px;margin:26px 0 12px}
+    .product-lookup-form>label{display:block;margin-bottom:7px;color:#405046;font-size:12px;font-weight:700}
+    .product-lookup-input-row{display:flex;gap:8px}
+    .product-lookup-input-row input{flex:1;min-width:0;padding:11px 13px;border:1px solid #cbd8d1;border-radius:8px;background:#fff;color:#17201d;font:inherit}
+    .product-lookup-form small,.product-lookup-status{color:#68766f;font-size:12px}
+    .product-lookup-form small{display:block;margin-top:7px}
+    .product-lookup-status{min-height:22px;margin:17px 0 10px}
+    .product-lookup-results{border-top:1px solid #dce5df}
+    .product-lookup-result{padding:15px 2px;border-bottom:1px solid #e1e8e4}
+    .product-lookup-result-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+    .product-lookup-result h3{margin:0;color:#1e2a25;font-size:16px}
+    .product-lookup-sku{flex:none;color:#08785b;font-size:12px;font-weight:700}
+    .product-lookup-details{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 18px;margin:0}
+    .product-lookup-details div{min-width:0}
+    .product-lookup-details dt{color:#7a8780;font-size:10px;font-weight:700;text-transform:uppercase}
+    .product-lookup-details dd{margin:3px 0 0;color:#293831;font-size:13px;overflow-wrap:anywhere}
+    .product-lookup-empty{padding:26px 4px;color:#68766f;text-align:center}
+    @media(max-width:700px){.product-lookup-input-row{display:grid;grid-template-columns:1fr 1fr}.product-lookup-input-row input{grid-column:1/-1}.product-lookup-details{grid-template-columns:repeat(2,minmax(0,1fr))}.product-lookup-result-heading{display:block}.product-lookup-sku{display:block;margin-top:5px}}
     @media(max-width:900px){#countSheetPanel .print-toolbar{display:grid;grid-template-columns:minmax(0,1fr)}#countSheetPanel .generated-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch;width:100%}#countSheetPanel .supplier-filter,#countSheetPanel .supplier-filter select{width:100%;min-width:0}.supplier-selection-list{max-height:190px}.supplier-selection-actions{grid-column:1/-1;width:max-content}.generated-actions>#backCountData,.generated-actions>#printSheetBtn,.generated-actions>#exportSheetBtn{width:100%;height:auto;min-height:44px}}
     #countSheetPanel .reference-signoff{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px 10px;margin-top:12px}
     @media print{.reference-table .supplier-group-row td{height:auto!important;padding:3px 5px!important;line-height:1.1!important}.reference-table .supplier-group-label{font-size:8px!important;letter-spacing:0!important}#countSheetPanel .reference-signoff{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:10px!important;gap:4px 8px!important;font-size:8px!important}.count-sheet-page{break-inside:avoid;page-break-inside:avoid}}
@@ -90,7 +109,7 @@
       .reference-table th,.count-sheet-table th{background:#000!important;color:#fff!important;border-color:#000!important}
       .reference-table td,.count-sheet-table td,.reference-meta,.reference-title,.reference-signoff,.count-line,.barcode-missing,.barcode-render-fallback{color:#000!important;border-color:#000!important}
       .reference-title span{color:#000!important;border-color:#000!important}
-      .scan-barcode{filter:grayscale(1) contrast(1.2)}
+      .scan-barcode{filter:grayscale(1) contrast(1.2);shape-rendering:crispEdges;text-rendering:geometricPrecision}
       .mini-bars{background:repeating-linear-gradient(90deg,#000 0 2px,transparent 2px 5px,#000 5px 8px,transparent 8px 11px,#000 11px 13px,transparent 13px 16px)!important}
       .count-tag,.tag-header,.tag-info,.tag-barcode,.signoff{background:#fff!important;color:#000!important;border-color:#000!important}
       .prince-logo,.prince-logo small{background:#fff!important;color:#000!important;border:1px solid #000!important}
@@ -107,6 +126,7 @@
       </div>
     </div>
     <nav class="top-actions">
+      <button class="nav-button" id="productLookupNav" type="button" title="Search the master product catalog">⌕ <span>SKU / Barcode</span></button>
       <button class="nav-button" id="settingsBtn" title="Open settings"><span class="gear">⚙</span> <span>Settings</span></button>
       <button class="nav-button muted" id="creditsBtn">About Us</button>
       <button class="nav-button reset" id="resetBtn" hidden>↻ <span>Start over</span></button>
@@ -164,6 +184,23 @@
     <section id="configurePanel" class="panel" hidden><div class="panel-heading"><div><p class="section-kicker">STEP 03</p><h2>Configure layout</h2><p>Set the count sheet dimensions and choose what appears when printing.</p></div><span class="status-pill"><span class="status-dot"></span> Live preview</span></div><div class="layout-controls"><div class="layout-control-grid"><label>Paper size<select id="paperSize"><option value="letter">Letter · Bond paper</option><option value="a4">A4</option><option value="legal">Legal</option></select></label><label>Orientation<select id="orientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label><label>Page margins<select id="pageMargins"><option value="compact">Compact · 0.28 in</option><option value="standard">Standard · 0.5 in</option><option value="wide">Wide · 0.75 in</option></select></label><label>Rows per page<select id="rowsPerPage"><option value="8">8 rows</option><option value="10">10 rows</option><option value="12">12 rows</option></select></label><label>Row height <output id="rowHeightValue">50 px</output><input id="rowHeight" type="range" min="38" max="82" value="50"></label><label>Table font size <output id="fontSizeValue">11 px</output><input id="fontSize" type="range" min="9" max="16" value="11"></label><label>Barcode width <output id="barcodeWidthValue">110 px</output><input id="barcodeWidth" type="range" min="70" max="170" value="110"></label><label>Count line width <output id="countLineValue">88%</output><input id="countLineWidth" type="range" min="55" max="100" value="88"></label></div><div class="layout-toggles"><div class="toggle-row"><span><b>Show barcode</b><small>Print the barcode in each row</small></span><input id="showSheetBarcode" type="checkbox" checked></div><div class="toggle-row"><span><b>Show locator column</b><small>Keep the locator beside each item</small></span><input id="showSheetLocator" type="checkbox" checked></div><div class="toggle-row"><span><b>Show supplier header</b><small>Start each supplier group with its name</small></span><input id="showSupplierHeader" type="checkbox" checked></div></div></div><div class="layout-preview-note"><span class="note-icon">i</span><span>These settings apply to the supplier-grouped count sheet and are preserved while you move between steps.</span></div><div class="layout-live-preview"><div class="live-preview-heading"><b>COUNT SHEET PREVIEW</b><span>Updates as you change settings</span></div><div id="countSheetLivePreview"><div class="live-empty">Import inventory to preview your count sheet.</div></div></div><div class="bottom-actions"><button class="secondary-button" id="backData">← Back to validation</button><div class="heading-actions"><button class="secondary-button" id="goCountSheet">▦ Generate Count Sheet</button><button class="primary-button" id="goGenerate">Generate Count Tags →</button></div></div></section>
 
     <section id="countSheetPanel" class="count-sheet-workspace" hidden><div class="print-toolbar"><div><p class="section-kicker">COUNT SHEET · SUPPLIER GROUPING</p><h2>Count Sheet</h2><p id="countSheetSummary">Physical inventory grouped by supplier, with locator on every row.</p></div><div class="generated-actions"><label class="supplier-filter">Print supplier<select id="supplierFilter"><option value="all">All suppliers</option></select></label><label class="supplier-filter">Group sheets<select id="supplierGroupingMode"><option value="split">One supplier per sheet</option><option value="combined">Combine suppliers</option></select></label><div id="supplierSelectionList" class="supplier-selection-list" hidden></div><button class="secondary-button" id="backCountData">← Back</button><button class="secondary-button" id="printSheetBtn">⎙ Print sheet</button><button class="primary-button" id="exportSheetBtn">↓ Export PDF</button></div></div><div id="countSheetPages"></div></section>
+    <section id="productLookupPanel" class="panel product-lookup-panel" hidden aria-labelledby="productLookupHeading">
+      <div class="panel-heading">
+        <div><p class="section-kicker">MASTER PRODUCT CATALOG</p><h2 id="productLookupHeading">SKU / Barcode Lookup</h2><p>Search the master file for product, supplier, and category details.</p></div>
+        <button class="secondary-button" id="backFromProductLookup" type="button">← Back to cycle count</button>
+      </div>
+      <form id="productLookupForm" class="product-lookup-form" role="search">
+        <label for="productLookupInput">SKU or barcode</label>
+        <div class="product-lookup-input-row">
+          <input id="productLookupInput" type="search" inputmode="search" autocomplete="off" placeholder="Enter at least 2 characters" aria-describedby="productLookupHint">
+          <button class="primary-button" type="submit">Search</button>
+          <button class="secondary-button" id="clearProductLookup" type="button">Clear</button>
+        </div>
+        <small id="productLookupHint">Searches by SKU or UPC/barcode. Partial codes are supported.</small>
+      </form>
+      <div id="productLookupStatus" class="product-lookup-status" role="status" aria-live="polite">The master catalog loads when you search.</div>
+      <div class="product-lookup-results" id="productLookupResults" aria-live="polite"></div>
+    </section>
   </main>
 
   <div class="toast" id="toast" role="status"></div>
@@ -222,5 +259,6 @@
   <script src="count-sheet-reference.js"></script>
   <script src="layout-persistence.js"></script>
   <script src="print-controller.js"></script>
+  <script src="product-lookup.js"></script>
 </body>
 </html>

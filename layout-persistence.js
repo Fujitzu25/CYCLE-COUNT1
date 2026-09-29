@@ -36,6 +36,8 @@ function markCombinedSuppliersPrinted(suppliers,signature=getInventoryPrintSigna
 function resetCombinedPrintStatus(){
 	localStorage.removeItem('danne-lozana-printed-suppliers');
 	syncSupplierSelectionList();
+	if(typeof renderCountSheet==='function')renderCountSheet();
+	if(typeof refreshLayoutPreview==='function')refreshLayoutPreview();
 }
 
 function getSelectedCombinedSuppliers(){
@@ -78,7 +80,13 @@ function syncSupplierSelectionList(){
 	clearAll.textContent='Clear All';
 	clearAll.disabled=selectedSet.size===0;
 	clearAll.addEventListener('click',()=>setCombinedSuppliers([]));
-	actions.append(selectAll,clearAll);
+	const resetPrinted=document.createElement('button');
+	resetPrinted.type='button';
+	resetPrinted.className='supplier-selection-action reset-printed';
+	resetPrinted.textContent='Reset Printed';
+	resetPrinted.disabled=printedSuppliers.size===0;
+	resetPrinted.addEventListener('click',resetCombinedPrintStatus);
+	actions.append(selectAll,clearAll,resetPrinted);
 	list.appendChild(actions);
 
 	suppliers.forEach(supplier=>{
