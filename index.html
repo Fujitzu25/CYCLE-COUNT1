@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="settings-hub.css">
   <link rel="stylesheet" href="print-tags.css">
   <link rel="stylesheet" href="count-sheet.css">
   <link rel="stylesheet" href="count-sheet-reference.css">
@@ -307,7 +308,55 @@
     </div>
   </div>
   <div hidden><button id="generateBtn"></button><button id="goGenerate"></button><button id="backConfigure"></button><button id="printBtn"></button><button id="pdfBtn"></button><div id="tagSheet"></div><div id="generatedSummary"></div></div>
-  <div class="modal-backdrop" id="modalBackdrop" hidden><div class="modal"><button class="close-modal" id="closeModal">×</button><p class="section-kicker">SYSTEM SETTINGS</p><h2>Workspace settings</h2><p class="modal-copy">Personalize the generator for your team.</p><label>Accent color<select id="accentSelect"><option value="emerald">Emerald</option><option value="sapphire">Sapphire</option><option value="amber">Amber</option></select></label><label class="toggle-row modal-toggle"><span><b>Compact table rows</b><small>Fit more inventory on screen</small></span><input type="checkbox"></label><button class="primary-button full-button" id="saveSettings">Save settings</button></div></div>
+  <div class="modal-backdrop settings-backdrop" id="modalBackdrop" hidden>
+    <section class="settings-hub" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <header class="settings-hub-header">
+        <div class="settings-hub-icon" aria-hidden="true">⚙</div>
+        <div class="settings-hub-heading">
+          <div class="settings-hub-title-row"><h2 id="settingsTitle">System Settings</h2><span class="settings-badge">Customization Hub</span><span class="settings-version">DEC v2.0.7</span></div>
+          <p>Customize your system identity, color palette, custom corporate logo, or manage and reset inventory data.</p>
+        </div>
+        <button class="close-modal settings-close" id="closeModal" type="button" aria-label="Close settings">×</button>
+      </header>
+      <nav class="settings-tabs" role="tablist" aria-label="System settings">
+        <button class="settings-tab active" type="button" role="tab" data-settings-tab="identity" aria-selected="true"><span aria-hidden="true">▦</span>1. System Name &amp; Identity</button>
+        <button class="settings-tab" type="button" role="tab" data-settings-tab="palette" aria-selected="false"><span aria-hidden="true">◉</span>2. Color Palette</button>
+        <button class="settings-tab" type="button" role="tab" data-settings-tab="logo" aria-selected="false"><span aria-hidden="true">▧</span>3. Custom Logo</button>
+        <button class="settings-tab" type="button" role="tab" data-settings-tab="data" aria-selected="false"><span aria-hidden="true">↻</span>4. Reset &amp; Data Management</button>
+      </nav>
+      <div class="settings-content">
+        <section class="settings-view" role="tabpanel" data-settings-view="identity">
+          <p class="settings-kicker">SYSTEM IDENTITY</p><h3>Name your workspace</h3><p class="settings-description">These details appear in the application and on generated count sheets.</p>
+          <div class="settings-fields-grid">
+            <label>System name<input id="systemNameField" type="text" maxlength="70" placeholder="FUJI CYCLE COUNT SHEET GENERATOR"></label>
+            <label>Editor name<input id="editorName" type="text" maxlength="70" placeholder="Name shown on count sheets"></label>
+            <label class="settings-field-wide">Store name<input id="settingsStoreName" type="text" maxlength="100" placeholder="Store or branch name"></label>
+          </div>
+        </section>
+        <section class="settings-view" role="tabpanel" data-settings-view="palette" hidden>
+          <p class="settings-kicker">COLOR PALETTE</p><h3>Choose your system color</h3><p class="settings-description">The selected color updates the primary controls and system accents.</p>
+          <div class="settings-swatches" role="group" aria-label="Color palette">
+            <button class="settings-swatch" type="button" data-accent-option="emerald" aria-pressed="true"><span style="--swatch:#047857"></span>Emerald</button>
+            <button class="settings-swatch" type="button" data-accent-option="sapphire" aria-pressed="false"><span style="--swatch:#1d4ed8"></span>Sapphire</button>
+            <button class="settings-swatch" type="button" data-accent-option="amber" aria-pressed="false"><span style="--swatch:#b45309"></span>Amber</button>
+            <button class="settings-swatch" type="button" data-accent-option="rose" aria-pressed="false"><span style="--swatch:#be123c"></span>Rose</button>
+          </div>
+          <label class="custom-color-field">Custom color<input id="customAccent" type="color" value="#047857"></label>
+          <select id="accentSelect" class="settings-hidden-select" aria-hidden="true" tabindex="-1"><option value="emerald">Emerald</option><option value="sapphire">Sapphire</option><option value="amber">Amber</option><option value="rose">Rose</option><option value="custom">Custom</option></select>
+        </section>
+        <section class="settings-view" role="tabpanel" data-settings-view="logo" hidden>
+          <p class="settings-kicker">CUSTOM LOGO</p><h3>Brand your workspace</h3><p class="settings-description">Upload a small image to replace the mark in the top navigation. The image stays in this browser.</p>
+          <div class="logo-settings-row"><div class="logo-preview" id="logoPreview" aria-label="Logo preview">F</div><div class="logo-settings-controls"><label class="secondary-button logo-upload-button">Choose logo<input id="customLogoInput" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label><small>PNG, JPG, WEBP, or GIF. Maximum file size: 1 MB.</small><button class="text-button logo-remove-button" id="removeLogoBtn" type="button">Remove custom logo</button></div></div>
+        </section>
+        <section class="settings-view" role="tabpanel" data-settings-view="data" hidden>
+          <p class="settings-kicker">RESET &amp; DATA MANAGEMENT</p><h3>Manage your local workspace</h3><p class="settings-description">Inventory and preferences are stored in this browser. Download a backup before clearing data.</p>
+          <div class="data-management-actions"><div><b>Workspace backup</b><small>Save inventory, store details, and system preferences to a JSON file.</small></div><button class="secondary-button" id="downloadBackupBtn" type="button">↓ Download backup</button><label class="secondary-button restore-backup-button">↑ Restore backup<input id="restoreBackupInput" type="file" accept=".json,application/json"></label></div>
+          <div class="data-management-actions danger-actions"><div><b>Reset options</b><small>Reset customization without deleting inventory, or clear the current inventory.</small></div><button class="secondary-button" id="resetSettingsBtn" type="button">Reset settings</button><button class="danger-button" id="clearInventoryBtn" type="button">Clear inventory</button></div>
+        </section>
+      </div>
+      <footer class="settings-footer"><span id="settingsSaveStatus" role="status" aria-live="polite">Settings are saved in this browser.</span><button class="primary-button" id="saveSettings" type="button">Save settings</button></footer>
+    </section>
+  </div>
   <div class="modal-backdrop" id="printConfirmationModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="printConfirmationTitle"><p class="section-kicker">PRINT STATUS</p><h2 id="printConfirmationTitle">Did these suppliers print successfully?</h2><p class="modal-copy" id="printConfirmationSuppliers"></p><div class="printed-confirmation-actions"><button class="secondary-button" id="cancelSupplierPrintConfirmation">Not printed</button><button class="primary-button" id="confirmSuppliersPrinted">Mark printed</button></div></div></div>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>

@@ -3,6 +3,10 @@ function splitLocatorValues(rawValue=''){
   return [...new Set(String(rawValue).split(/[\/;,|]/).map(value=>value.trim().replace(/\s+/g,' ')).filter(Boolean).map(value=>value.toUpperCase()).filter(Boolean))];
 }
 
+function escapeSheetText(value){
+  return String(value??'').replace(/[&<>"']/g,character=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+}
+
 function buildCountSheetRows(items){
   const merged=new Map();
   items.forEach(item=>{
@@ -82,6 +86,8 @@ function paginateCombinedSupplierRows(groups,suppliers,maxSkuRows){
 }
 
 function renderCountSheet(previewOnly=false){
+  const storeName=escapeSheetText($('storeField').value||'Store #14014 - Retail');
+  const editorName=escapeSheetText($('editorName')?.value||'Danne Lozana');
   const selectedSupplier=$('supplierFilter')?.value||'all';
   const filteredItems=selectedSupplier==='all'?items:items.filter(item=>(item.supplier||'Unassigned Supplier')===selectedSupplier);
   const mergedRows=buildCountSheetRows(filteredItems);
@@ -147,8 +153,8 @@ function renderCountSheet(previewOnly=false){
     <article class="count-sheet-page reference-sheet">
       <header class="reference-sheet-header">
         <div class="reference-title">COUNT SHEET <span>PHYSICAL INVENTORY</span><strong>${groupingMode==='combined' && supplier==='Combined Suppliers' ? 'MULTI-SUPPLIER' : supplier}</strong></div>
-        <div class="reference-meta"><b>STORE:</b> ${$('storeField').value||'Store #14014 - Retail'} <b>BRANCH:</b> Prince Cauayan</div>
-        <div class="reference-meta"><b>SUPPLIER:</b> ${groupingMode==='combined' && supplier==='Combined Suppliers' ? 'MIXED SUPPLIERS' : supplier} <b>DATE:</b> ${$('dateField').value||'2026-09-14'} <b>PREPARED BY:</b> Danne Lozana</div>
+        <div class="reference-meta"><b>STORE:</b> ${storeName} <b>BRANCH:</b> Prince Cauayan</div>
+        <div class="reference-meta"><b>SUPPLIER:</b> ${groupingMode==='combined' && supplier==='Combined Suppliers' ? 'MIXED SUPPLIERS' : supplier} <b>DATE:</b> ${$('dateField').value||'2026-09-14'} <b>PREPARED BY:</b> ${editorName}</div>
       </header>
       <table class="count-sheet-table reference-table">
         <thead><tr><th>#</th><th>SKU</th><th>BARCODE</th><th>DESCRIPTION</th><th>SELLING LOCATOR</th><th>COUNT</th><th>BUFFER LOCATOR</th><th>COUNT</th><th>WAREHOUSE LOCATOR</th><th>COUNT</th></tr></thead>

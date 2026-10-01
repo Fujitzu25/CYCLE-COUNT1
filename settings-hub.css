@@ -1,0 +1,54 @@
+.settings-backdrop{z-index:10;padding:16px}
+.settings-hub{position:relative;width:min(1160px,100%);max-height:min(94vh,900px);overflow:auto;background:#fff;color:var(--ink);border:1px solid #dce4df;border-radius:12px;padding:32px 36px 24px;box-shadow:0 20px 70px #17201d38}
+.settings-hub-header{display:flex;align-items:center;gap:20px;padding:0 0 27px;border-bottom:1px solid #edf1ee}
+.settings-hub-icon{width:72px;height:72px;flex:none;display:grid;place-items:center;border-radius:17px;background:var(--accent);color:#fff;font-size:32px}
+.settings-hub-heading{min-width:0;flex:1}
+.settings-hub-title-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
+.settings-hub-title-row h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:26px;line-height:1.2}
+.settings-badge,.settings-version{display:inline-flex;align-items:center;min-height:28px;padding:4px 11px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.settings-badge{border:1px solid #a7f3d0;background:#effcf6;color:var(--emerald-dark)}
+.settings-version{border:1px solid #e1e4e2;background:#f5f6f5;color:#39443e;font-family:monospace}
+.settings-hub-heading>p{margin:6px 0 0;color:#657169;font-size:14px}
+.settings-close{position:static;align-self:flex-start;margin-left:auto;font-size:25px}
+.settings-tabs{display:grid;grid-template-columns:1.15fr .85fr .8fr 1.25fr;gap:8px;padding:22px 0;border-bottom:1px solid #edf1ee}
+.settings-tab{min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 12px;border-radius:9px;background:transparent;color:#58635c;font-size:13px;font-weight:700;text-align:left}
+.settings-tab>span{flex:none;font-size:18px;line-height:1}
+.settings-tab:hover{background:#f1f6f3;color:var(--emerald-dark)}
+.settings-tab.active{background:var(--accent);color:#fff;box-shadow:0 3px 8px #17201d18}
+.settings-content{min-height:280px}
+.settings-view{padding:28px 2px 30px}
+.settings-kicker{margin:0 0 4px;color:var(--accent);font-size:10px;font-weight:800;letter-spacing:1.1px}
+.settings-view h3{margin:0;font-family:'Space Grotesk',sans-serif;font-size:20px}
+.settings-description{margin:5px 0 22px;color:#748078;font-size:13px}
+.settings-fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px 20px;max-width:780px}
+.settings-fields-grid label{color:#4f5d54;font-size:12px}
+.settings-field-wide{grid-column:1/-1}
+.settings-fields-grid input{height:42px;margin-top:6px}
+.settings-swatches{display:flex;flex-wrap:wrap;gap:12px;margin:7px 0 25px}
+.settings-swatch{min-width:132px;display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid #dce4df;border-radius:8px;background:#fff;color:#354139;font-size:13px;font-weight:700}
+.settings-swatch:hover{border-color:var(--accent)}
+.settings-swatch[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent)}
+.settings-swatch>span{width:22px;height:22px;flex:none;border:1px solid #00000012;border-radius:50%;background:var(--swatch)}
+.custom-color-field{display:flex;align-items:center;gap:14px;color:#4f5d54;font-size:12px}
+.custom-color-field input{width:54px;height:38px;padding:3px;margin:0;cursor:pointer}
+.settings-hidden-select{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.logo-settings-row{display:flex;align-items:center;gap:20px}
+.logo-preview{width:112px;height:112px;display:grid;place-items:center;overflow:hidden;border:1px solid #d6e0da;border-radius:14px;background:#f2f6f3;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700}
+.logo-preview img{width:100%;height:100%;object-fit:contain}
+.logo-settings-controls{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.logo-upload-button{position:relative;overflow:hidden;display:inline-flex;align-items:center;min-height:38px;cursor:pointer}
+.logo-upload-button input,.restore-backup-button input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.logo-settings-controls small{color:#7a857e;font-size:11px}
+.logo-remove-button{display:inline-block;margin:0;padding:4px 0;color:#a14538}
+.data-management-actions{display:flex;align-items:center;gap:10px;padding:16px 0;border-top:1px solid #e9eeeb}
+.data-management-actions>div{flex:1;min-width:220px}
+.data-management-actions b,.data-management-actions small{display:block}
+.data-management-actions b{color:#354139;font-size:13px}
+.data-management-actions small{margin-top:3px;color:#7a857e;font-size:11px}
+.restore-backup-button{position:relative;overflow:hidden;display:inline-flex;align-items:center;min-height:38px;cursor:pointer}
+.danger-button{border:1px solid #efd0cb;border-radius:7px;background:#fff6f4;color:#a33c2e;padding:9px 13px;font-size:12px;font-weight:700;white-space:nowrap}
+.danger-button:hover{background:#fce9e5}
+.settings-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:17px;border-top:1px solid #edf1ee}
+.settings-footer>span{color:#7a857e;font-size:11px}
+@media(max-width:850px){.settings-hub{padding:25px 24px 20px}.settings-tabs{grid-template-columns:1fr 1fr}.settings-content{min-height:300px}}
+@media(max-width:600px){.settings-backdrop{padding:8px}.settings-hub{max-height:96vh;padding:20px 16px 16px}.settings-hub-header{align-items:flex-start;gap:12px;padding-bottom:18px}.settings-hub-icon{width:48px;height:48px;border-radius:12px;font-size:24px}.settings-hub-title-row h2{font-size:21px}.settings-hub-title-row{gap:6px}.settings-badge,.settings-version{min-height:24px;padding:3px 8px;font-size:10px}.settings-hub-heading>p{font-size:12px}.settings-close{padding:0 2px}.settings-tabs{gap:6px;padding:14px 0}.settings-tab{justify-content:flex-start;min-height:46px;padding:8px;font-size:11px}.settings-tab>span{font-size:15px}.settings-fields-grid{grid-template-columns:1fr;gap:12px}.settings-field-wide{grid-column:auto}.settings-swatches{gap:8px}.settings-swatch{min-width:calc(50% - 4px);padding:9px}.data-management-actions{align-items:flex-start;flex-wrap:wrap}.data-management-actions>div{flex:1 0 100%}.logo-preview{width:86px;height:86px}.settings-footer{align-items:flex-end}.settings-footer>span{max-width:55%}}

@@ -16,7 +16,7 @@ const MASTER_DETAILS_STORAGE_KEY='cycle-count-master-details-v1';
 let hotlistProducts=[];
 let activeHotlistCategory='MILK';
 let hotlistShiftState=readLocalObject(HOTLIST_STORAGE_KEY);
-let masterProductDetails=readLocalObject(MASTER_DETAILS_STORAGE_KEY);
+let masterProductDetails=Object.fromEntries(Object.entries(readLocalObject(MASTER_DETAILS_STORAGE_KEY)).map(([sku,details])=>[normalizeMasterSku(sku),details]));
 
 function readLocalObject(key){
   try{return JSON.parse(localStorage.getItem(key)||'{}')||{};}catch{return {};}
@@ -150,7 +150,7 @@ function createProductImage(url,label,barcodes=[]){
 }
 
 function lookupMasterDetails(sku){
-  return masterProductDetails[String(sku||'').trim()]||{};
+  return masterProductDetails[normalizeMasterSku(sku)]||{};
 }
 
 function renderProductLookupResults(products,query,total=products.length,searchMode='sku'){
@@ -447,7 +447,7 @@ function normalizeMasterHeader(value){
 }
 
 function normalizeMasterSku(value){
-  return String(value??'').trim().replace(/\.0$/,'');
+  return String(value??'').trim().replace(/\.0$/,'').toUpperCase();
 }
 
 async function importPriceLocatorMaster(file){

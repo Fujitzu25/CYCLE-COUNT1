@@ -381,6 +381,165 @@ async function restoreLocalInventory(){
 }
 restoreLocalInventory();
 
+const workspaceSettingsKey='cycle-count-workspace-settings-v1';
+const defaultWorkspaceSettings={systemName:'FUJI CYCLE COUNT SHEET GENERATOR',editorName:'',storeName:'',accent:'emerald',customAccent:'#047857',logoData:''};
+let workspaceSettings={...defaultWorkspaceSettings};
+try{workspaceSettings={...defaultWorkspaceSettings,...JSON.parse(localStorage.getItem(workspaceSettingsKey)||'{}')}}catch(error){console.warn('Could not restore workspace settings:',error)}
+const systemNameField=$('systemNameField');
+const editorNameField=$('editorName');
+const settingsStoreField=$('settingsStoreName');
+const accentSelect=$('accentSelect');
+const customAccentField=$('customAccent');
+let currentLogoData=workspaceSettings.logoData||'';
+systemNameField.value=workspaceSettings.systemName||defaultWorkspaceSettings.systemName;
+editorNameField.value=workspaceSettings.editorName||'';
+settingsStoreField.value=workspaceSettings.storeName||$('storeField').value;
+accentSelect.value=workspaceSettings.accent||'emerald';
+customAccentField.value=workspaceSettings.customAccent||'#047857';
+
+const settingsPalettes={
+  emerald:{color:'#047857',dark:'#065f46',soft:'#ecfdf5'},
+  sapphire:{color:'#1d4ed8',dark:'#1e40af',soft:'#eff6ff'},
+  amber:{color:'#b45309',dark:'#92400e',soft:'#fffbeb'},
+  rose:{color:'#be123c',dark:'#9f1239',soft:'#fff1f2'}
+};
+function applyWorkspaceAppearance(){
+  const selected=accentSelect.value;
+  const palette=settingsPalettes[selected];
+  const color=palette?.color||customAccentField.value||'#047857';
+  document.documentElement.dataset.accent=selected;
+  document.documentElement.style.setProperty('--accent',color);
+  document.documentElement.style.setProperty('--emerald',color);
+  document.documentElement.style.setProperty('--emerald-dark',palette?.dark||color);
+  document.documentElement.style.setProperty('--emerald-soft',palette?.soft||`${color}1a`);
+  const brandName=document.querySelector('.brand-name');
+  if(brandName)brandName.textContent=systemNameField.value.trim()||defaultWorkspaceSettings.systemName;
+  document.title=systemNameField.value.trim()||defaultWorkspaceSettings.systemName;
+  const brandMark=document.querySelector('.brand-mark');
+  const logoPreview=$('logoPreview');
+  [brandMark,logoPreview].forEach((target,index)=>{
+    if(!target)return;
+    target.replaceChildren();
+    if(currentLogoData){
+      const image=document.createElement('img');
+      image.src=currentLogoData;
+      image.alt=index?'Custom logo preview':'Custom system logo';
+      target.appendChild(image);
+      if(index===0)target.style.background='transparent';
+    }else{
+      target.textContent='F';
+      if(index===0)target.style.removeProperty('background');
+    }
+  });
+  document.querySelectorAll('[data-accent-option]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.accentOption===selected)));
+}
+
+document.querySelectorAll('.settings-tab').forEach(button=>button.addEventListener('click',()=>{
+  document.querySelectorAll('.settings-tab').forEach(tab=>{
+    const active=tab===button;
+    tab.classList.toggle('active',active);
+    tab.setAttribute('aria-selected',String(active));
+  });
+  document.querySelectorAll('[data-settings-view]').forEach(view=>{view.hidden=view.dataset.settingsView!==button.dataset.settingsTab});
+}));
+document.querySelectorAll('[data-accent-option]').forEach(button=>button.addEventListener('click',()=>{
+  accentSelect.value=button.dataset.accentOption;
+  applyWorkspaceAppearance();
+}));
+customAccentField.addEventListener('input',()=>{accentSelect.value='custom';applyWorkspaceAppearance()});
+systemNameField.addEventListener('input',applyWorkspaceAppearance);
+$('customLogoInput').addEventListener('change',event=>{
+  const file=event.target.files?.[0];
+  if(!file)return;
+  if(file.size>1024*1024){toast('Choose a logo smaller than 1 MB');event.target.value='';return}
+  const reader=new FileReader();
+  reader.onload=()=>{currentLogoData=String(reader.result||'');applyWorkspaceAppearance()};
+  reader.onerror=()=>toast('Could not read that logo file');
+  reader.readAsDataURL(file);
+});
+$('removeLogoBtn').addEventListener('click',()=>{currentLogoData='';$('customLogoInput').value='';applyWorkspaceAppearance()});
+
+function saveWorkspaceSettings(){
+  workspaceSettings={
+    systemName:systemNameField.value.trim()||defaultWorkspaceSettings.systemName,
+    editorName:editorNameField.value.trim(),
+    storeName:settingsStoreField.value.trim(),
+    accent:accentSelect.value,
+    customAccent:customAccentField.value,
+    logoData:currentLogoData
+  };
+  $('storeField').value=workspaceSettings.storeName;
+  $('storeField').dispatchEvent(new Event('change'));
+  try{localStorage.setItem(workspaceSettingsKey,JSON.stringify(workspaceSettings));$('settingsSaveStatus').textContent='Settings saved in this browser.'}catch(error){$('settingsSaveStatus').textContent='Settings could not be saved in this browser.';console.warn('Could not save workspace settings:',error)}
+  applyWorkspaceAppearance();
+  $('modalBackdrop').hidden=true;
+  if(typeof refreshLayoutPreview==='function')refreshLayoutPreview();
+  toast('Settings saved');
+}
+function openSettings(){
+  settingsStoreField.value=$('storeField').value;
+  $('modalBackdrop').hidden=false;
+}
+$('settingsBtn').onclick=openSettings;
+$('closeModal').onclick=()=>{$('modalBackdrop').hidden=true};
+$('modalBackdrop').onclick=event=>{if(event.target===$('modalBackdrop'))$('modalBackdrop').hidden=true};
+$('saveSettings').onclick=saveWorkspaceSettings;
+applyWorkspaceAppearance();
+
+$('downloadBackupBtn').addEventListener('click',()=>{
+  const backup={schemaVersion:1,createdAt:new Date().toISOString(),inventory:{items,store:$('storeField').value,date:$('dateField').value},settings:workspaceSettings};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}));
+  const link=document.createElement('a');
+  link.href=url;
+  link.download='fuji-cycle-count-backup.json';
+  link.click();
+  URL.revokeObjectURL(url);
+});
+$('restoreBackupInput').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];
+  if(!file)return;
+  try{
+    const backup=JSON.parse(await file.text());
+    const inventory=backup.inventory||backup;
+    if(!Array.isArray(inventory.items))throw new Error('This file does not contain a valid inventory backup.');
+    $('storeField').value=inventory.store||'';
+    $('dateField').value=inventory.date||$('dateField').value;
+    if(backup.settings&&typeof backup.settings==='object'){
+      workspaceSettings={...defaultWorkspaceSettings,...backup.settings};
+      systemNameField.value=workspaceSettings.systemName;
+      editorNameField.value=workspaceSettings.editorName;
+      settingsStoreField.value=workspaceSettings.storeName||inventory.store||'';
+      accentSelect.value=workspaceSettings.accent;
+      customAccentField.value=workspaceSettings.customAccent;
+      currentLogoData=workspaceSettings.logoData||'';
+      localStorage.setItem(workspaceSettingsKey,JSON.stringify(workspaceSettings));
+      applyWorkspaceAppearance();
+    }
+    loadItems(inventory.items,file.name);
+    event.target.value='';
+    $('modalBackdrop').hidden=true;
+    toast('Backup restored');
+  }catch(error){toast(error.message||'Could not restore this backup');event.target.value=''}
+});
+$('resetSettingsBtn').addEventListener('click',()=>{
+  if(!confirm('Reset system name, editor, store, logo, and color settings? Inventory will be kept.'))return;
+  workspaceSettings={...defaultWorkspaceSettings};
+  currentLogoData='';
+  systemNameField.value=defaultWorkspaceSettings.systemName;
+  editorNameField.value='';
+  settingsStoreField.value='';
+  accentSelect.value='emerald';
+  customAccentField.value='#047857';
+  $('storeField').value='';
+  $('storeField').dispatchEvent(new Event('change'));
+  localStorage.removeItem(workspaceSettingsKey);
+  applyWorkspaceAppearance();
+  toast('System settings reset');
+});
+$('clearInventoryBtn').addEventListener('click',()=>{
+  if(confirm('Clear the inventory saved in this browser? This cannot be undone unless you have a backup.'))$('resetBtn').click();
+});
+
 function applyLayout(){
   const root=document.documentElement;
   const rowHeight=$('rowHeight').value;
