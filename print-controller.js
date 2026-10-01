@@ -12,13 +12,19 @@ function getSelectedSuppliersForPrint(){
 }
 
 function prepareCountSheetPrint(){
-  if(typeof applyLayout==='function')applyLayout();
+  if(document.body.classList.contains('print-shelftag'))return;
+  if(!$('shelfTagPanel')?.hidden&&!$('shelfStep5')?.hidden&&typeof shelfPreparePrint==='function'){
+    shelfPreparePrint();
+    return;
+  }
+  if(typeof applyLayout==='function')applyLayout(false);
   if(typeof renderCountSheet==='function')renderCountSheet();
   Object.values(panels).forEach(panel=>panel.hidden=true);
   $('countSheetPanel').hidden=false;
   document.body.classList.add('print-count-sheet');
 }
 function finishCountSheetPrint(){
+  if(!document.body.classList.contains('print-count-sheet'))return;
   document.body.classList.remove('print-count-sheet');
   if(!pendingCombinedPrint.length)return;
   $('printConfirmationSuppliers').textContent=pendingCombinedPrint.join(', ');

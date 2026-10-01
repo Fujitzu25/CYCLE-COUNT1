@@ -540,7 +540,7 @@ $('clearInventoryBtn').addEventListener('click',()=>{
   if(confirm('Clear the inventory saved in this browser? This cannot be undone unless you have a backup.'))$('resetBtn').click();
 });
 
-function applyLayout(){
+function applyLayout(showToast=true){
   const root=document.documentElement;
   const rowHeight=$('rowHeight').value;
   const fontSize=$('fontSize').value;
@@ -569,11 +569,11 @@ function applyLayout(){
   $('countLineValue').textContent=`${countLineWidth}%`;
   document.body.classList.toggle('sheet-hide-barcode',!$('showSheetBarcode').checked);
   document.body.classList.toggle('sheet-hide-locator',!$('showSheetLocator').checked);
-  toast('Layout updated');
+  if(showToast)toast('Layout updated');
 }
 function refreshLayoutPreview(){const preview=$('countSheetLivePreview');if(!preview)return;if(!items.length){preview.innerHTML='<div class="live-empty">Import inventory to preview your count sheet.</div>';return}renderCountSheet(true)}
 ['paperSize','orientation','pageMargins','rowsPerPage','rowHeight','fontSize','barcodeWidth','countLineWidth','showSheetBarcode','showSheetLocator','showSupplierHeader'].forEach(id=>$(id).addEventListener('change',refreshLayoutPreview));['rowHeight','fontSize','barcodeWidth','countLineWidth'].forEach(id=>$(id).addEventListener('input',refreshLayoutPreview));document.addEventListener('click',event=>{if(event.target.closest('[data-step="3"],#countSheetBtn,#generateBtn,#backData'))setTimeout(refreshLayoutPreview,0)});
-['paperSize','orientation','pageMargins','rowsPerPage','rowHeight','fontSize','barcodeWidth','countLineWidth','showSheetBarcode','showSheetLocator','showSupplierHeader'].forEach(id=>$(id).addEventListener('change',applyLayout));['rowHeight','fontSize','barcodeWidth','countLineWidth'].forEach(id=>$(id).addEventListener('input',applyLayout));$('orientation').value='landscape';applyLayout();
+['paperSize','orientation','pageMargins','rowsPerPage','rowHeight','fontSize','barcodeWidth','countLineWidth','showSheetBarcode','showSheetLocator','showSupplierHeader'].forEach(id=>$(id).addEventListener('change',applyLayout));['rowHeight','fontSize','barcodeWidth','countLineWidth'].forEach(id=>$(id).addEventListener('input',applyLayout));$('orientation').value='landscape';applyLayout(false);
 
 function renderCountSheet(){
   const groups=items.reduce((result,item)=>{const key=item.supplier||'Unassigned Supplier';(result[key]??=[]).push(item);return result;},{});

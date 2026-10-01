@@ -1,0 +1,9 @@
+[
+  {
+    "id": "2026-10-01-shelftag-workflow",
+    "date": "2026-10-01",
+    "author": "System Administrator",
+    "title": "ShelfTag workflow and Home dashboard",
+    "message": "The ShelfTag workflow now supports millimeter-based white shelf tags and yellow PP promo tags, spreadsheet imports, barcode previews, and print-ready PDF export. The Home dashboard provides quick access to inventory, count sheets, product lookup, and administrator updates."
+  }
+]

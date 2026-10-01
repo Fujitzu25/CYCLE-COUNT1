@@ -13,7 +13,9 @@
   <link rel="stylesheet" href="print-tags.css">
   <link rel="stylesheet" href="count-sheet.css">
   <link rel="stylesheet" href="count-sheet-reference.css">
-  <link rel="stylesheet" href="feed.css">
+  <link rel="stylesheet" href="shelftag.css">
+  <link rel="stylesheet" href="home-dashboard.css">
+  <link rel="stylesheet" href="announcements.css">
   <style>
     .rows-control{display:flex;align-items:center;gap:7px}.rows-control input{margin-top:5px}.rows-presets{display:flex;gap:4px;margin-top:6px}.rows-presets button{background:#fff;border:1px solid #d4ddd7;border-radius:5px;color:#536158;padding:3px 7px;font-size:10px}.rows-presets button:hover{border-color:var(--accent);color:var(--accent)}.supplier-filter{color:#647069;font-size:11px;text-align:left}.supplier-filter select{min-width:165px;margin-top:3px;padding:7px 9px;font-size:11px}
     @media screen {
@@ -167,9 +169,12 @@
       </div>
     </div>
     <nav class="top-actions">
-      <button class="nav-button" id="productLookupNav" type="button" title="Search the master product catalog">⌕ <span>SKU / Barcode</span></button>
-      <button class="nav-button" id="hotlistNav" type="button" title="Open hotlist shift counts">▤ <span>Hotlist</span></button>
-      <button class="nav-button" id="communityFeedNav" type="button" title="Open the community feed" aria-label="Community Feed"><span>Community Feed</span></button>
+      <button class="nav-button" id="homeNav" type="button" title="Open Home dashboard" aria-current="page">⌂ <span>Home</span></button>
+      <button class="nav-button" id="countSheetNav" type="button" title="Open Count Sheet">▦ <span>Count Sheet</span></button>
+      <button class="nav-button" id="shelfTagNav" type="button" title="Open Shelftag / PP Tag Printing">▤ <span>Shelf Tag</span></button>
+      <button class="nav-button" id="productLookupNav" type="button" title="Search the master product catalog">⌕ <span>Product Lookup</span></button>
+      <button class="nav-button" id="announcementsNav" type="button" title="Read announcements and updates">▤ <span>Announcements / Updates</span></button>
+      <div hidden><button id="hotlistNav" type="button">Hotlist</button></div>
       <button class="nav-button" id="settingsBtn" title="Open settings"><span class="gear">⚙</span> <span>Settings</span></button>
       <button class="nav-button muted" id="creditsBtn">About Us</button>
       <button class="nav-button reset" id="resetBtn" hidden>↻ <span>Start over</span></button>
@@ -177,7 +182,27 @@
   </header>
 
   <main class="page-shell">
-    <section class="intro-row">
+    <section id="homePanel" class="home-dashboard" hidden aria-labelledby="homeHeading">
+      <header class="home-hero">
+        <div><p class="home-eyebrow">FUJI INVENTORY WORKSPACE · OPERATIONS DESK</p><h1 id="homeHeading">Inventory, at a glance.</h1><p>Prepare accurate counts, create shelf-ready price tags, and look up product details from one place.</p></div>
+        <div class="home-health" id="homeHealth"><span class="home-health-dot"></span><span id="homeSystemHealth">Checking system</span><small>LOCAL WORKSPACE</small></div>
+      </header>
+      <div class="home-stat-strip" aria-label="Workspace status">
+        <div class="home-stat"><span class="home-stat-icon" aria-hidden="true">▦</span><div><small>Inventory records</small><strong id="homeItemCount">0</strong></div></div>
+        <div class="home-stat"><span class="home-stat-icon home-stat-icon-yellow" aria-hidden="true">▤</span><div><small>Count workflows</small><strong>Cycle count + shelf tags</strong></div></div>
+        <div class="home-stat"><span class="home-stat-icon home-stat-icon-blue" aria-hidden="true">◷</span><div><small>Workspace updated</small><strong id="homeLastUpdated">Checking date</strong></div></div>
+      </div>
+      <div class="home-section-heading"><div><p class="home-eyebrow">QUICK ACCESS</p><h2>Choose a workflow</h2></div><span>01 / 05</span></div>
+      <div class="home-feature-grid">
+        <article class="home-feature home-feature-count"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▦</span><span class="home-feature-index">01</span></div><h3>Count Sheet</h3><p>Import inventory, review SKU records, organize suppliers, and prepare physical count sheets.</p><button type="button" data-home-open="countSheetNav">Open count sheet <span aria-hidden="true">→</span></button></article>
+        <article class="home-feature home-feature-shelf"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▤</span><span class="home-feature-index">02</span></div><h3>Shelf Tag Printing</h3><p>Build millimeter-accurate white shelf tags and yellow promo tags with barcode footers.</p><button type="button" data-home-open="shelfTagNav">Open shelf tags <span aria-hidden="true">→</span></button></article>
+        <article class="home-feature home-feature-lookup"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">⌕</span><span class="home-feature-index">03</span></div><h3>Product Lookup</h3><p>Search the master catalog by SKU, barcode, or product description.</p><button type="button" data-home-open="productLookupNav">Search products <span aria-hidden="true">→</span></button></article>
+        <article class="home-feature home-feature-updates"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▧</span><span class="home-feature-index">04</span></div><h3>Announcements</h3><p>Read administrator-published release notes and operations updates.</p><button type="button" data-home-open="announcementsNav">Read updates <span aria-hidden="true">→</span></button></article>
+        <article class="home-feature home-feature-hotlist"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▥</span><span class="home-feature-index">05</span></div><h3>Hotlist</h3><p>Review focused shift counts for milk, cigarettes, and liquor inventory.</p><button type="button" data-home-open="hotlistNav">Open hotlist <span aria-hidden="true">→</span></button></article>
+      </div>
+      <footer class="home-footer"><span>FUJI CYCLE COUNT SYSTEM</span><span>Inventory data stays in this browser.</span></footer>
+    </section>
+    <section id="introRow" class="intro-row">
       <div>
         <p class="eyebrow">DANNE MODULE 01</p>
         <h1>CYCLE COUNT</h1>
@@ -188,7 +213,7 @@
       </div>
     </section>
 
-    <section class="stepper" aria-label="Workflow steps">
+    <section id="stepper" class="stepper" aria-label="Workflow steps">
       <button class="step active" data-step="1"><span>1</span><strong>Import Excel</strong><i>Upload inventory</i></button>
       <div class="step-line"></div>
       <button class="step" data-step="2"><span>2</span><strong>Validate & Edit</strong><i>Review your data</i></button>
@@ -260,26 +285,104 @@
       <div id="hotlistResults" class="hotlist-results" aria-live="polite"><p class="hotlist-empty">Loading hotlist items…</p></div>
       <div class="hotlist-footer"><span id="hotlistSaveStatus" class="hotlist-status" role="status" aria-live="polite"></span><button id="saveShiftData" class="primary-button" type="button">Save Shift Data</button></div>
     </section>
-    <section id="communityFeedPanel" class="panel community-feed" hidden aria-labelledby="communityFeedHeading">
-      <header class="feed-heading">
-        <div><p class="section-kicker">COMMUNITY</p><h2 id="communityFeedHeading">Community Feed</h2><p>Share updates, photos, and ideas with everyone.</p></div>
-        <button class="secondary-button" id="backFromCommunityFeed" type="button">← Back to cycle count</button>
+    <section id="announcementsPanel" class="announcements-panel" hidden aria-labelledby="announcementsHeading">
+      <header class="announcements-header"><div><p class="announcements-eyebrow">ADMINISTRATOR UPDATES</p><h2 id="announcementsHeading">Announcements / Updates</h2><p>Read-only notices for the Fuji inventory workspace.</p></div><span class="announcements-readonly"><span aria-hidden="true">●</span> READ ONLY</span></header>
+      <div class="announcements-status" id="announcementsStatus" role="status" aria-live="polite">Loading announcements…</div>
+      <div class="announcement-list" id="announcementList" aria-live="polite"></div>
+      <footer class="announcements-footer"><span>FUJI CYCLE COUNT SYSTEM</span><span>Updates are published by an administrator.</span></footer>
+    </section>
+    <section id="shelfTagPanel" class="panel shelf-tag-panel" hidden aria-labelledby="shelfTagHeading">
+      <div class="shelf-module-banner"><strong>MODULE 2 • V2.0.3 - Shelftag / PP Tag Printing Workflow</strong><span>Millimeter-based retail tag layout</span></div>
+      <header class="shelf-header">
+        <div><p class="section-kicker">RETAIL LABELS</p><h2 id="shelfTagHeading">Shelftag / PP Tag Printing Workflow</h2><p>Import product data, set physical tag quantities, and print shelf-ready labels.</p></div>
+        <div class="shelf-header-actions"><button class="secondary-button" id="shelfTagPrintTop" type="button">Print (0)</button><button class="primary-button" id="shelfPrintTopPdf" type="button" disabled>Export PDF</button><button class="secondary-button" id="shelfBackButton" type="button">← Back</button></div>
       </header>
-      <form class="feed-compose" id="feedPostForm">
-        <div class="feed-compose-heading"><div><span class="feed-overline">CREATE POST</span><h3>What would you like to share?</h3></div><span class="feed-compose-mark" aria-hidden="true">＋</span></div>
-        <label for="feedPostName">Your Name</label>
-        <input id="feedPostName" name="name" type="text" maxlength="50" autocomplete="name" placeholder="Enter your name" required>
-        <label for="feedPostText">What's on your mind?</label>
-        <textarea id="feedPostText" name="text" maxlength="1000" rows="4" placeholder="Write a post for the community..." required></textarea>
-        <div class="feed-compose-actions">
-          <label class="feed-photo-picker" for="feedPostImage"><span aria-hidden="true">▧</span> Add a photo<input id="feedPostImage" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label>
-          <span class="feed-image-name" id="feedImageName">No photo selected</span>
-          <button class="feed-publish" id="feedPublishButton" type="submit">Publish <span aria-hidden="true">→</span></button>
+      <div class="shelf-tag-switcher" role="group" aria-label="Tag type">
+        <button class="shelf-tag-choice" type="button" data-shelf-type="yellow" aria-pressed="true">Yellow Tag (PP Tag) <small>85 × 38 mm</small></button>
+        <button class="shelf-tag-choice" type="button" data-shelf-type="white" aria-pressed="false">White Tag (ShelfTag) <small>Standard barcode</small></button>
+      </div>
+      <nav class="shelf-workflow" aria-label="Shelf tag workflow steps">
+        <button class="shelf-workflow-step" type="button" data-shelf-step="1" aria-current="step"><span class="shelf-step-number">1</span><span><strong>Tag</strong><small>Choose format</small></span></button>
+        <button class="shelf-workflow-step" type="button" data-shelf-step="2" aria-current="false"><span class="shelf-step-number">2</span><span><strong>Data &amp; Import</strong><small>Map product fields</small></span></button>
+        <button class="shelf-workflow-step" type="button" data-shelf-step="3" aria-current="false"><span class="shelf-step-number">3</span><span><strong>Field Layout</strong><small>Style tag content</small></span></button>
+        <button class="shelf-workflow-step" type="button" data-shelf-step="4" aria-current="false"><span class="shelf-step-number">4</span><span><strong>Paper &amp; Sheet</strong><small>Set grid dimensions</small></span></button>
+        <button class="shelf-workflow-step" type="button" data-shelf-step="5" aria-current="false"><span class="shelf-step-number">5</span><span><strong>Preview &amp; Print</strong><small>Review output</small></span></button>
+      </nav>
+
+      <section class="shelf-step-panel" id="shelfStep1" data-shelf-panel="1">
+        <div class="shelf-panel-heading"><div><h3>Choose a tag format</h3><p>Switching formats applies a practical starting size and sheet grid.</p></div></div>
+        <div class="shelf-type-grid">
+          <button class="shelf-type-card" type="button" data-shelf-type-card="yellow" aria-pressed="true"><span class="shelf-type-swatch yellow">PROMO<br>260.00/RM1</span><span><strong>Yellow Promo Tag / PP Tag</strong><small>85 × 44 mm · Promo threshold, split price, product ID, and barcode footer.</small></span><span class="shelf-type-check" aria-hidden="true">✓</span></button>
+          <button class="shelf-type-card" type="button" data-shelf-type-card="white" aria-pressed="false"><span class="shelf-type-swatch">PRODUCT<br>289.95</span><span><strong>White Tag / ShelfTag</strong><small>85 × 44 mm · Date code, split regular price, metadata, and barcode footer.</small></span><span class="shelf-type-check" aria-hidden="true">✓</span></button>
         </div>
-        <p class="feed-status" id="feedPostStatus" role="status" aria-live="polite"></p>
-      </form>
-      <div class="feed-list-heading"><div><span class="feed-overline">LATEST</span><h3>Community posts</h3></div><span id="feedConnectionStatus" class="feed-connection" role="status" aria-live="polite">Connecting…</span></div>
-      <div class="feed-post-list" id="feedPostList" aria-live="polite"><p class="feed-empty">Loading community posts…</p></div>
+        <div class="shelf-step-actions"><span></span><button class="primary-button" type="button" data-shelf-next>Continue to data →</button></div>
+      </section>
+
+      <section class="shelf-step-panel" id="shelfStep2" data-shelf-panel="2" hidden>
+        <div class="shelf-panel-heading"><div><h3>Import and map product data</h3><p>Map spreadsheet columns, then edit product prices and promo copy inline before printing.</p></div><button class="secondary-button" id="shelfAddRow" type="button">＋ Add product</button></div>
+        <div class="shelf-import-bar"><label class="shelf-upload" id="shelfUpload">↑ <span>Choose or drop CSV / Excel file</span><input id="shelfFileInput" type="file" accept=".csv,.xls,.xlsx"></label><span class="shelf-import-status" id="shelfImportStatus" role="status" aria-live="polite">No file loaded.</span></div>
+        <div class="shelf-mapper" id="shelfMapper" hidden aria-label="Spreadsheet field mapping"></div>
+        <div class="shelf-summary"><span id="shelfDataSummary">0 imported SKUs · 0 selected physical tags</span><strong>Tags to print: <span id="shelfTotalTagsSummary">0</span></strong></div>
+        <div class="shelf-import-bar"><button class="text-button" id="shelfSelectAll" type="button">Select all</button><button class="text-button" id="shelfSelectNone" type="button">Clear selection</button></div>
+        <div class="shelf-bulk-promo"><label for="shelfBulkPromo">Apply promo description to selected rows</label><textarea id="shelfBulkPromo" rows="2" maxlength="120" placeholder="BUY 3 RM1 AND UP"></textarea><button class="secondary-button" id="shelfApplyBulkPromo" type="button">Apply to selected</button></div>
+        <section class="shelf-live-preview-panel shelf-live-preview-compact" aria-labelledby="shelfDataLivePreviewHeading"><div><p class="shelf-live-kicker">LIVE TAG PREVIEW</p><h4 id="shelfDataLivePreviewHeading">Editing · <span id="shelfDataLivePreviewType">Yellow PP Tag</span></h4></div><div class="shelf-live-preview-frame" id="shelfDataLivePreview"><p>Import product data to preview a tag.</p></div></section>
+        <div class="shelf-table-wrap"><div class="shelf-data-empty" id="shelfEmptyData">Upload a CSV or Excel file, or add a product manually.</div><table class="shelf-data-table" id="shelfDataTable" hidden><thead><tr><th>Select</th><th>SKU</th><th>Description</th><th>Barcode</th><th>Regular price</th><th>Promo price</th><th>Promo description</th><th>Unit</th><th>Location</th><th>Date code</th><th>Item ID</th><th>Footer code</th><th>Tags</th></tr></thead><tbody id="shelfRowsBody"></tbody></table></div>
+        <div class="shelf-step-actions"><button class="secondary-button" type="button" data-shelf-prev>← Tag</button><button class="primary-button" type="button" data-shelf-next>Field layout →</button></div>
+      </section>
+
+      <section class="shelf-step-panel" id="shelfStep3" data-shelf-panel="3" hidden>
+        <div class="shelf-panel-heading"><div><h3>Arrange tag fields</h3><p>Adjust field placement, alignment, and type size; the preview updates immediately.</p></div></div>
+        <div class="shelf-control-grid">
+          <label>Text alignment<select id="shelfTagAlignment" data-shelf-control><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select></label>
+          <label>Title position<select id="shelfTitlePosition" data-shelf-control><option value="top">Top</option><option value="middle">Middle</option></select></label>
+          <label>Barcode placement<select id="shelfBarcodePosition" data-shelf-control><option value="bottom">Bottom</option><option value="side">Side</option><option value="hidden">Hidden</option></select></label>
+          <label class="shelf-check-control"><input id="shelfShowBarcode" type="checkbox" data-shelf-control checked> Show barcode graphic</label>
+          <label>Title size <output id="shelfTitleSizeValue">10 pt</output><input id="shelfTitleSize" type="range" min="6" max="16" step="1" value="10" data-shelf-control></label>
+          <label>Price size <output id="shelfPriceSizeValue">52 pt</output><input id="shelfPriceSize" type="range" min="28" max="68" step="1" value="52" data-shelf-control></label>
+          <label>SKU / code size <output id="shelfCodeSizeValue">8 pt</output><input id="shelfCodeSize" type="range" min="6" max="12" step="1" value="8" data-shelf-control></label>
+        </div>
+        <section class="shelf-live-preview-panel" aria-labelledby="shelfLivePreviewHeading"><div><p class="shelf-live-kicker">LIVE TAG PREVIEW</p><h4 id="shelfLivePreviewHeading">Current product · <span id="shelfLivePreviewType">Yellow PP Tag</span></h4></div><div class="shelf-live-preview-frame" id="shelfLivePreview"><p>Import product data to preview a tag.</p></div></section>
+        <p class="shelf-inline-note">Yellow PP tags print with a warm yellow field and high-contrast promo pricing. White ShelfTags use the regular price field and barcode-first layout.</p>
+        <div class="shelf-step-actions"><button class="secondary-button" type="button" data-shelf-prev>← Data &amp; Import</button><button class="primary-button" type="button" data-shelf-next>Paper &amp; sheet →</button></div>
+      </section>
+
+      <section class="shelf-step-panel" id="shelfStep4" data-shelf-panel="4" hidden>
+        <div class="shelf-panel-heading"><div><h3>Paper and sheet setup</h3><p>All dimensions and margins are in millimeters. The fit check compares the full tag grid to printable area.</p></div></div>
+        <div class="shelf-control-grid">
+          <label>Paper size<select id="shelfPaperSize" data-shelf-control><option value="legal">Legal · 215.9 × 355.6 mm</option><option value="a4">A4 · 210 × 297 mm</option><option value="letter">Letter · 215.9 × 279.4 mm</option><option value="custom">Custom</option></select></label>
+          <label>Orientation<select id="shelfOrientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label>
+          <label>Sheet width (mm)<input id="shelfSheetWidth" type="number" min="50" max="1000" step="0.1" value="215.9" data-shelf-control></label>
+          <label>Sheet height (mm)<input id="shelfSheetHeight" type="number" min="50" max="1000" step="0.1" value="355.6" data-shelf-control></label>
+          <label>Columns<input id="shelfColumns" type="number" min="1" max="20" step="1" value="2" data-shelf-control></label>
+          <label>Rows<input id="shelfRows" type="number" min="1" max="40" step="1" value="8" data-shelf-control></label>
+          <label>Tag width (mm)<input id="shelfTagWidth" type="number" min="10" max="250" step="0.1" value="85" data-shelf-control></label>
+          <label>Tag height (mm)<input id="shelfTagHeight" type="number" min="10" max="250" step="0.1" value="38" data-shelf-control></label>
+          <label>Horizontal gap (mm)<input id="shelfGapX" type="number" min="0" max="50" step="0.1" value="2" data-shelf-control></label>
+          <label>Vertical gap (mm)<input id="shelfGapY" type="number" min="0" max="50" step="0.1" value="2" data-shelf-control></label>
+          <label>Top margin (mm)<input id="shelfMarginTop" type="number" min="0" max="100" step="0.1" value="6" data-shelf-control></label>
+          <label>Right margin (mm)<input id="shelfMarginRight" type="number" min="0" max="100" step="0.1" value="6" data-shelf-control></label>
+          <label>Bottom margin (mm)<input id="shelfMarginBottom" type="number" min="0" max="100" step="0.1" value="6" data-shelf-control></label>
+          <label>Left margin (mm)<input id="shelfMarginLeft" type="number" min="0" max="100" step="0.1" value="6" data-shelf-control></label>
+        </div>
+        <div class="shelf-sheet-output"><span class="shelf-fit-badge" id="shelfFitBadge" data-fit="true">✓ 2-Column Layout Fits</span><small id="shelfFitDetails">Sheet dimensions and grid occupancy will appear here.</small></div>
+        <div class="shelf-summary"><span>Tags / Sheet = <strong id="shelfTagsPerSheet">16</strong></span><span>Estimated Sheets = <strong id="shelfEstimatedSheets">0</strong></span><span>Total physical tags = <strong id="shelfTotalTagsPaperSummary">0</strong></span></div>
+        <div class="shelf-step-actions"><button class="secondary-button" type="button" data-shelf-prev>← Field layout</button><button class="primary-button" type="button" data-shelf-next>Live preview →</button></div>
+      </section>
+
+      <section class="shelf-step-panel" id="shelfStep5" data-shelf-panel="5" hidden>
+        <div class="shelf-panel-heading"><div><h3>Live preview and print</h3><p id="shelfTagSummary">Import data and select SKUs to preview tags.</p></div></div>
+        <div class="shelf-preview-toolbar" id="shelfPreviewToolbar">
+          <div class="shelf-page-controls"><button class="shelf-icon-button" id="shelfPagePrev" type="button" aria-label="Previous page" title="Previous page">‹</button><output id="shelfPageNumber">Page 1 of 1</output><button class="shelf-icon-button" id="shelfPageNext" type="button" aria-label="Next page" title="Next page">›</button></div>
+          <div class="shelf-zoom-controls" role="group" aria-label="Preview zoom"><span>Zoom</span><button type="button" data-shelf-zoom="fit" aria-pressed="true">Fit</button><button type="button" data-shelf-zoom="65" aria-pressed="false">65%</button><button type="button" data-shelf-zoom="85" aria-pressed="false">85%</button><button type="button" data-shelf-zoom="100" aria-pressed="false">100%</button><output id="shelfZoomReadout">Fit</output></div>
+          <label class="shelf-preview-options"><input id="shelfGuidesPreview" type="checkbox" checked> Printable Area Guides</label>
+          <span class="shelf-total-indicator" id="shelfTotalTags">0 physical tags</span>
+        </div>
+        <div class="shelf-preview-stage"><div class="shelf-preview-frame" id="shelfPreviewFrame"><div class="shelf-pages" id="shelfPages"></div></div></div>
+        <div class="shelf-summary"><span id="shelfCurrentSheetStatus">No tags to preview yet.</span></div>
+        <div class="shelf-step-actions"><button class="secondary-button" type="button" data-shelf-prev>← Paper &amp; sheet</button><div class="shelf-header-actions"><button class="secondary-button" id="shelfPrintDirect" type="button" disabled>Print Directly</button><button class="primary-button" id="shelfExportPdf" type="button" disabled>Save as PDF</button></div></div>
+        <p class="shelf-recommendation">In browser print dialog, select Actual Size (100%) rather than Fit to Page for exact 1:1 millimeter alignment.</p>
+      </section>
+      <button id="backFromShelfTag" type="button" hidden>Back to cycle count</button>
     </section>
   </main>
 
@@ -383,11 +486,14 @@
   <div class="modal-backdrop" id="printConfirmationModal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="printConfirmationTitle"><p class="section-kicker">PRINT STATUS</p><h2 id="printConfirmationTitle">Did these suppliers print successfully?</h2><p class="modal-copy" id="printConfirmationSuppliers"></p><div class="printed-confirmation-actions"><button class="secondary-button" id="cancelSupplierPrintConfirmation">Not printed</button><button class="primary-button" id="confirmSuppliersPrinted">Mark printed</button></div></div></div>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="app.js"></script>
   <script src="count-sheet-reference.js"></script>
   <script src="layout-persistence.js"></script>
   <script src="print-controller.js"></script>
   <script src="product-lookup.js"></script>
-  <script type="module" src="feed.js"></script>
+  <script src="shelftag.js"></script>
+  <script src="announcements.js"></script>
 </body>
 </html>

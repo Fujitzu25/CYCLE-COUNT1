@@ -1,0 +1,21 @@
+.announcements-panel{--notice-ink:#1b2821;--notice-muted:#6c7971;--notice-line:#dce5df;max-width:1050px;margin:0 auto;color:var(--notice-ink)}
+.announcements-panel[hidden]{display:none!important}
+.announcements-header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:22px;padding:0 0 17px;border-bottom:1px solid var(--notice-line)}
+.announcements-header h2{margin:0;font-family:'Space Grotesk',sans-serif;font-size:28px;letter-spacing:0}
+.announcements-header p:not(.announcements-eyebrow){margin:6px 0 0;color:var(--notice-muted);font-size:12px}
+.announcements-eyebrow{margin:0 0 7px;color:#08785b;font-size:10px;font-weight:800;letter-spacing:1.2px}
+.announcements-readonly{display:flex;align-items:center;gap:7px;padding:7px 9px;border:1px solid #d7e6dc;background:#f1f8f3;color:#286246;font-size:9px;font-weight:800;letter-spacing:.6px;white-space:nowrap}
+.announcements-readonly span{color:#299260;font-size:8px}
+.announcements-status{min-height:20px;margin:0 0 9px;color:var(--notice-muted);font-size:11px}
+.announcement-list{display:grid;gap:0;border-top:1px solid var(--notice-line)}
+.announcement-entry{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;padding:22px 8px;border-bottom:1px solid var(--notice-line);animation:announcement-arrive .25s ease both}
+.announcement-date{color:#69766e;font-size:10px;font-weight:700}
+.announcement-date span{display:block;margin-top:4px;color:#9aa39c;font-size:9px;font-weight:500}
+.announcement-content h3{margin:0;color:var(--notice-ink);font-family:'Space Grotesk',sans-serif;font-size:17px;letter-spacing:0}
+.announcement-author{margin-top:5px;color:#08785b;font-size:10px;font-weight:700}
+.announcement-content p{margin:10px 0 0;color:#4d5c53;font-size:12px;line-height:1.7;white-space:pre-line;overflow-wrap:anywhere}
+.announcements-empty{padding:38px 16px;border-bottom:1px solid var(--notice-line);color:var(--notice-muted);font-size:12px;text-align:center}
+.announcements-footer{display:flex;justify-content:space-between;gap:12px;margin-top:22px;color:#89948d;font-size:9px}
+@keyframes announcement-arrive{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.announcements-header{align-items:flex-start;flex-direction:column}.announcements-header h2{font-size:23px}.announcement-entry{grid-template-columns:1fr;gap:7px;padding:18px 3px}.announcements-footer{align-items:flex-start;flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.announcement-entry{animation:none}}

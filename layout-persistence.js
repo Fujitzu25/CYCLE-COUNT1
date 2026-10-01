@@ -125,7 +125,7 @@ paperSizeControl.querySelector('option[value="legal"]').textContent='Legal · 8.
 paperSizeControl.add(new Option('Long bond · Folio (8.5 x 13 in)','folio'));
 function saveLayoutSettings(){const values={};layoutControlIds.forEach(id=>{const control=document.getElementById(id);values[id]=control.type==='checkbox'?control.checked:control.value});localStorage.setItem('danne-lozana-count-layout',JSON.stringify(values))}
 function restoreLayoutSettings(){try{const values=JSON.parse(localStorage.getItem('danne-lozana-count-layout')||'{}');layoutControlIds.forEach(id=>{const control=document.getElementById(id);if(values[id]===undefined)return;if(control.type==='checkbox')control.checked=values[id];else{if(id==='rowsPerPage'&&!Array.from(control.options).some(option=>option.value===String(values[id]))){control.add(new Option(`${values[id]} rows`,String(values[id])))}control.value=values[id]}})}catch(error){localStorage.removeItem('danne-lozana-count-layout')}
-if(typeof applyLayout==='function')applyLayout();if(typeof refreshLayoutPreview==='function')refreshLayoutPreview()}
+if(typeof applyLayout==='function')applyLayout(false);if(typeof refreshLayoutPreview==='function')refreshLayoutPreview()}
 restoreLayoutSettings();
 layoutControlIds.forEach(id=>{const control=document.getElementById(id);control.addEventListener('change',()=>{saveLayoutSettings();if(typeof recordLocalHistory==='function')recordLocalHistory('Layout changed',`${id}: ${control.type==='checkbox'?control.checked:control.value}`)});control.addEventListener('input',saveLayoutSettings)});
 $('configureSheetBtn').onclick=()=>{showStep(3);refreshLayoutPreview()};

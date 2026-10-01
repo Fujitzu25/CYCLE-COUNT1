@@ -1,12 +1,17 @@
 const productLookupCache=new Map();
 const productDescriptionCache=new Map();
 const productImageCache=new Map();
+const homeNavigation=$('homeNav');
+const homePanel=$('homePanel');
+const countSheetNavigation=$('countSheetNav');
 const productLookupNavigation=$('productLookupNav');
 const productLookupPanel=$('productLookupPanel');
 const hotlistNavigation=$('hotlistNav');
 const hotlistPanel=$('hotlistPanel');
-const communityFeedNavigation=$('communityFeedNav');
-const communityFeedPanel=$('communityFeedPanel');
+const announcementsNavigation=$('announcementsNav');
+const announcementsPanel=$('announcementsPanel');
+const shelfTagNavigation=$('shelfTagNav');
+const shelfTagLookupPanel=$('shelfTagPanel');
 const productLookupViews=[...document.querySelectorAll('.page-shell > section')];
 let previousProductLookupView=null;
 let activeLookupPanel=null;
@@ -242,7 +247,7 @@ async function searchMasterCatalog(event){
 
 function openLookupPanel(panel,navigation,focusTarget){
   if(activeLookupPanel)activeLookupNavigation.removeAttribute('aria-current');
-  else previousProductLookupView=productLookupViews.map(view=>view.hidden);
+  countSheetNavigation.removeAttribute('aria-current');
   productLookupViews.forEach(view=>{view.hidden=true});
   panel.hidden=false;
   navigation.setAttribute('aria-current','page');
@@ -255,16 +260,51 @@ function closeLookupPanel(){
   if(!activeLookupPanel)return;
   activeLookupPanel.hidden=true;
   activeLookupNavigation.removeAttribute('aria-current');
-  if(previousProductLookupView){
-    productLookupViews.forEach((view,index)=>{view.hidden=previousProductLookupView[index]});
-  }else{
-    showStep(items.length?2:1);
-  }
+  showHomePanel();
+}
+function renderHomeDashboard(){
+  const totalItems=typeof items==='undefined'?0:items.length;
+  $('homeItemCount').textContent=totalItems.toLocaleString();
+  const online=navigator.onLine;
+  $('homeSystemHealth').textContent=online?'All systems ready':'Offline · local tools available';
+  $('homeHealth').dataset.online=String(online);
+  const lastUpdated=new Date(document.lastModified);
+  $('homeLastUpdated').textContent=Number.isNaN(lastUpdated.getTime())?new Date().toLocaleDateString():lastUpdated.toLocaleDateString();
+}
+function showHomePanel(){
+  if(activeLookupNavigation)activeLookupNavigation.removeAttribute('aria-current');
+  countSheetNavigation.removeAttribute('aria-current');
+  productLookupViews.forEach(view=>{view.hidden=true});
+  homePanel.hidden=false;
+  homeNavigation.setAttribute('aria-current','page');
+  activeLookupPanel=homePanel;
+  activeLookupNavigation=homeNavigation;
   previousProductLookupView=null;
+  renderHomeDashboard();
+}
+function showCountSheetWorkspace(){
+  if(activeLookupNavigation)activeLookupNavigation.removeAttribute('aria-current');
+  productLookupViews.forEach(view=>{view.hidden=true});
   activeLookupPanel=null;
   activeLookupNavigation=null;
+  previousProductLookupView=null;
+  homeNavigation.removeAttribute('aria-current');
+  countSheetNavigation.setAttribute('aria-current','page');
+  if(items.length&&typeof renderCountSheet==='function'){
+    renderCountSheet();
+    $('countSheetPanel').hidden=false;
+  }else{
+    $('introRow')?.removeAttribute('hidden');
+    $('stepper')?.removeAttribute('hidden');
+    showStep(1);
+  }
 }
 
+homeNavigation.addEventListener('click',showHomePanel);
+countSheetNavigation.addEventListener('click',showCountSheetWorkspace);
+document.querySelectorAll('[data-home-open]').forEach(button=>button.addEventListener('click',()=>$(button.dataset.homeOpen).click()));
+window.addEventListener('online',renderHomeDashboard);
+window.addEventListener('offline',renderHomeDashboard);
 productLookupNavigation.addEventListener('click',()=>{
   if(activeLookupPanel===productLookupPanel)closeLookupPanel();
   else openLookupPanel(productLookupPanel,productLookupNavigation,'productLookupInput');
@@ -275,11 +315,16 @@ hotlistNavigation.addEventListener('click',()=>{
 });
 $('backFromProductLookup').addEventListener('click',closeLookupPanel);
 $('backFromHotlist').addEventListener('click',closeLookupPanel);
-communityFeedNavigation.addEventListener('click',()=>{
-  if(activeLookupPanel===communityFeedPanel)closeLookupPanel();
-  else openLookupPanel(communityFeedPanel,communityFeedNavigation);
+announcementsNavigation.addEventListener('click',()=>{
+  if(activeLookupPanel===announcementsPanel)closeLookupPanel();
+  else openLookupPanel(announcementsPanel,announcementsNavigation);
 });
-$('backFromCommunityFeed').addEventListener('click',closeLookupPanel);
+shelfTagNavigation.addEventListener('click',()=>{
+  if(activeLookupPanel===shelfTagLookupPanel)closeLookupPanel();
+  else openLookupPanel(shelfTagLookupPanel,shelfTagNavigation);
+});
+$('backFromShelfTag').addEventListener('click',closeLookupPanel);
+showHomePanel();
 $('productLookupForm').addEventListener('submit',searchMasterCatalog);
 $('productLookupMode').addEventListener('change',()=>{
   productLookupRequest++;
