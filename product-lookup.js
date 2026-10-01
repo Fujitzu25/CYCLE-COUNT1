@@ -6,6 +6,8 @@ const homePanel=$('homePanel');
 const countSheetNavigation=$('countSheetNav');
 const productLookupNavigation=$('productLookupNav');
 const productLookupPanel=$('productLookupPanel');
+const masterlistNavigation=$('masterlistNav');
+const masterlistPanel=$('masterlistPanel');
 const hotlistNavigation=$('hotlistNav');
 const hotlistPanel=$('hotlistPanel');
 const announcementsNavigation=$('announcementsNav');
@@ -318,6 +320,10 @@ $('backFromHotlist').addEventListener('click',closeLookupPanel);
 announcementsNavigation.addEventListener('click',()=>{
   if(activeLookupPanel===announcementsPanel)closeLookupPanel();
   else openLookupPanel(announcementsPanel,announcementsNavigation);
+});
+masterlistNavigation.addEventListener('click',()=>{
+  if(activeLookupPanel===masterlistPanel)closeLookupPanel();
+  else openLookupPanel(masterlistPanel,masterlistNavigation);
 });
 shelfTagNavigation.addEventListener('click',()=>{
   if(activeLookupPanel===shelfTagLookupPanel)closeLookupPanel();

@@ -35,3 +35,7 @@ Withdrawal Qty is the cumulative quantity withdrawn so far for the shift. Log Wi
 ## Announcements
 
 Announcements are read-only for visitors and load from `comments.json`. Administrators publish updates by editing that JSON file with records containing `id`, `date`, `author`, `title`, and `message`, then publishing the site.
+
+## Masterlist View
+
+Open Masterlist from the top navigation and upload a Pcount monitoring workbook. The importer reads `CC Masterlist` plus `CC Sched`, `CC Variance Details`, and `IRA% IRA Summary` when present. Parsed master rows and available secondary sheets are stored in this browser's IndexedDB and restored on reload. The dashboard filters CCD and department, searches SKU/description/vendor fields, sorts by column, and renders 50 or 100 rows per page. Uploaded workbook contents are not uploaded to the website.

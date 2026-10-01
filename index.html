@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="shelftag.css">
   <link rel="stylesheet" href="home-dashboard.css">
   <link rel="stylesheet" href="announcements.css">
+  <link rel="stylesheet" href="masterlist.css">
   <style>
     .rows-control{display:flex;align-items:center;gap:7px}.rows-control input{margin-top:5px}.rows-presets{display:flex;gap:4px;margin-top:6px}.rows-presets button{background:#fff;border:1px solid #d4ddd7;border-radius:5px;color:#536158;padding:3px 7px;font-size:10px}.rows-presets button:hover{border-color:var(--accent);color:var(--accent)}.supplier-filter{color:#647069;font-size:11px;text-align:left}.supplier-filter select{min-width:165px;margin-top:3px;padding:7px 9px;font-size:11px}
     @media screen {
@@ -173,6 +174,7 @@
       <button class="nav-button" id="countSheetNav" type="button" title="Open Count Sheet">▦ <span>Count Sheet</span></button>
       <button class="nav-button" id="shelfTagNav" type="button" title="Open Shelftag / PP Tag Printing">▤ <span>Shelf Tag</span></button>
       <button class="nav-button" id="productLookupNav" type="button" title="Search the master product catalog">⌕ <span>Product Lookup</span></button>
+      <button class="nav-button" id="masterlistNav" type="button" title="Browse uploaded master data">▤ <span>Masterlist</span></button>
       <button class="nav-button" id="announcementsNav" type="button" title="Read announcements and updates">▤ <span>Announcements / Updates</span></button>
       <div hidden><button id="hotlistNav" type="button">Hotlist</button></div>
       <button class="nav-button" id="settingsBtn" title="Open settings"><span class="gear">⚙</span> <span>Settings</span></button>
@@ -192,13 +194,14 @@
         <div class="home-stat"><span class="home-stat-icon home-stat-icon-yellow" aria-hidden="true">▤</span><div><small>Count workflows</small><strong>Cycle count + shelf tags</strong></div></div>
         <div class="home-stat"><span class="home-stat-icon home-stat-icon-blue" aria-hidden="true">◷</span><div><small>Workspace updated</small><strong id="homeLastUpdated">Checking date</strong></div></div>
       </div>
-      <div class="home-section-heading"><div><p class="home-eyebrow">QUICK ACCESS</p><h2>Choose a workflow</h2></div><span>01 / 05</span></div>
+      <div class="home-section-heading"><div><p class="home-eyebrow">QUICK ACCESS</p><h2>Choose a workflow</h2></div><span>01 / 06</span></div>
       <div class="home-feature-grid">
         <article class="home-feature home-feature-count"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▦</span><span class="home-feature-index">01</span></div><h3>Count Sheet</h3><p>Import inventory, review SKU records, organize suppliers, and prepare physical count sheets.</p><button type="button" data-home-open="countSheetNav">Open count sheet <span aria-hidden="true">→</span></button></article>
         <article class="home-feature home-feature-shelf"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▤</span><span class="home-feature-index">02</span></div><h3>Shelf Tag Printing</h3><p>Build millimeter-accurate white shelf tags and yellow promo tags with barcode footers.</p><button type="button" data-home-open="shelfTagNav">Open shelf tags <span aria-hidden="true">→</span></button></article>
         <article class="home-feature home-feature-lookup"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">⌕</span><span class="home-feature-index">03</span></div><h3>Product Lookup</h3><p>Search the master catalog by SKU, barcode, or product description.</p><button type="button" data-home-open="productLookupNav">Search products <span aria-hidden="true">→</span></button></article>
-        <article class="home-feature home-feature-updates"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▧</span><span class="home-feature-index">04</span></div><h3>Announcements</h3><p>Read administrator-published release notes and operations updates.</p><button type="button" data-home-open="announcementsNav">Read updates <span aria-hidden="true">→</span></button></article>
-        <article class="home-feature home-feature-hotlist"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▥</span><span class="home-feature-index">05</span></div><h3>Hotlist</h3><p>Review focused shift counts for milk, cigarettes, and liquor inventory.</p><button type="button" data-home-open="hotlistNav">Open hotlist <span aria-hidden="true">→</span></button></article>
+        <article class="home-feature home-feature-masterlist"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▥</span><span class="home-feature-index">04</span></div><h3>Masterlist View</h3><p>Upload monitoring workbooks and browse CCD, department, SKU, and vendor records.</p><button type="button" data-home-open="masterlistNav">Browse masterlist <span aria-hidden="true">→</span></button></article>
+        <article class="home-feature home-feature-updates"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▧</span><span class="home-feature-index">05</span></div><h3>Announcements</h3><p>Read administrator-published release notes and operations updates.</p><button type="button" data-home-open="announcementsNav">Read updates <span aria-hidden="true">→</span></button></article>
+        <article class="home-feature home-feature-hotlist"><div class="home-feature-top"><span class="home-feature-icon" aria-hidden="true">▥</span><span class="home-feature-index">06</span></div><h3>Hotlist</h3><p>Review focused shift counts for milk, cigarettes, and liquor inventory.</p><button type="button" data-home-open="hotlistNav">Open hotlist <span aria-hidden="true">→</span></button></article>
       </div>
       <footer class="home-footer"><span>FUJI CYCLE COUNT SYSTEM</span><span>Inventory data stays in this browser.</span></footer>
     </section>
@@ -290,6 +293,41 @@
       <div class="announcements-status" id="announcementsStatus" role="status" aria-live="polite">Loading announcements…</div>
       <div class="announcement-list" id="announcementList" aria-live="polite"></div>
       <footer class="announcements-footer"><span>FUJI CYCLE COUNT SYSTEM</span><span>Updates are published by an administrator.</span></footer>
+    </section>
+    <section id="masterlistPanel" class="masterlist-panel" hidden aria-labelledby="masterlistHeading">
+      <header class="masterlist-header">
+        <div><p class="masterlist-eyebrow">MASTER DATA WORKSPACE</p><h2 id="masterlistHeading">Masterlist View</h2><p>Upload a Pcount monitoring workbook to browse SKU, CCD, department, and vendor records.</p></div>
+        <label class="masterlist-upload" id="masterlistDropzone"><span class="masterlist-upload-icon" aria-hidden="true">↑</span><span><strong>Master Data Upload</strong><small>Drop an Excel workbook or browse · .xlsx / .xls</small></span><input id="masterlistFile" type="file" accept=".xlsx,.xls"></label>
+      </header>
+      <div id="masterlistStatus" class="masterlist-status" role="status" aria-live="polite">Checking saved master data…</div>
+      <div class="masterlist-metrics" aria-label="Masterlist summary">
+        <div><small>Total SKUs Loaded</small><strong id="masterlistTotal">0</strong></div>
+        <div><small>SKUs in Selected Department</small><strong id="masterlistDepartmentCount">0</strong></div>
+        <div><small>Active CCD Filter</small><strong id="masterlistActiveCcd">All CCDs</strong></div>
+      </div>
+      <div class="masterlist-controls">
+        <label>CCD NO.<select id="masterlistCcd"><option value="">All CCDs</option></select></label>
+        <label>Department<select id="masterlistDepartment"><option value="">All Departments</option><option value="600">600 - FMCG</option><option value="630">630 - Fresh &amp; Staple</option><option value="650">650 - General Merch</option><option value="670">670 - Dept Store</option><option value="690">690 - Others</option></select></label>
+        <label class="masterlist-search">Search masterlist<input id="masterlistSearch" type="search" placeholder="SKU, description, vendor code or name" autocomplete="off"></label>
+        <label>Rows per page<select id="masterlistPageSize"><option value="50">50 rows</option><option value="100">100 rows</option></select></label>
+      </div>
+      <div class="masterlist-results-meta"><span id="masterlistResultCount">0 records</span><span id="masterlistPageSummary">Page 1 of 1</span></div>
+      <div class="masterlist-table-wrap"><table class="masterlist-table"><thead><tr>
+        <th><button type="button" data-master-sort="ccd">CCD NO.<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="sku">SKU<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="description">SKU Description<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="deptCode">Dept Code<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="department">Department<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="subdeptName">Subdept Name<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="classification">Classification<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="vendorCode">Vendor Code<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="vendorName">Vendor Name<span aria-hidden="true"></span></button></th>
+        <th><button type="button" data-master-sort="jdaBatchName">JDA Batch Name<span aria-hidden="true"></span></button></th>
+      </tr></thead><tbody id="masterlistBody"></tbody></table>
+        <div id="masterlistEmpty" class="masterlist-empty">Upload a monitoring workbook to load the masterlist.</div>
+      </div>
+      <nav class="masterlist-pagination" aria-label="Masterlist pagination"><button id="masterlistPrev" type="button" aria-label="Previous page" disabled>‹</button><span id="masterlistPageLabel">Page 1 of 1</span><button id="masterlistNext" type="button" aria-label="Next page" disabled>›</button></nav>
+      <div class="masterlist-secondary-data"><details><summary>Other workbook sheets</summary><div id="masterlistOtherSheets">Schedule, variance and IRA sheets are stored when present.</div></details></div>
     </section>
     <section id="shelfTagPanel" class="panel shelf-tag-panel" hidden aria-labelledby="shelfTagHeading">
       <div class="shelf-module-banner"><strong>MODULE 2 • V2.0.3 - Shelftag / PP Tag Printing Workflow</strong><span>Millimeter-based retail tag layout</span></div>
@@ -493,6 +531,7 @@
   <script src="layout-persistence.js"></script>
   <script src="print-controller.js"></script>
   <script src="product-lookup.js"></script>
+  <script src="masterlist.js"></script>
   <script src="shelftag.js"></script>
   <script src="announcements.js"></script>
 </body>
