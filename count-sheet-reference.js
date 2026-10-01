@@ -14,11 +14,13 @@ function buildCountSheetRows(items){
     const sku=String(item.sku||'').trim();
     const barcode=String(item.barcode||'').trim();
     const description=String(item.description||'').trim();
-    const key=`${supplier}::${sku}::${barcode}::${description.toLowerCase()}`;
+    const key=sku?JSON.stringify([supplier,sku.toUpperCase()]):JSON.stringify([supplier,barcode,description.toLowerCase()]);
     if(!merged.has(key)){
       merged.set(key,{supplier,sku,barcode,description, selling:[],buffer:[],warehouse:[]});
     }
     const row=merged.get(key);
+    if(!row.barcode&&barcode)row.barcode=barcode;
+    if(!row.description&&description)row.description=description;
     splitLocatorValues(item.locator).forEach(locator=>{
       if(/^SA-/i.test(locator))row.selling.push(locator);
       else if(/^BA-/i.test(locator))row.buffer.push(locator);

@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="print-tags.css">
   <link rel="stylesheet" href="count-sheet.css">
   <link rel="stylesheet" href="count-sheet-reference.css">
+  <link rel="stylesheet" href="feed.css">
   <style>
     .rows-control{display:flex;align-items:center;gap:7px}.rows-control input{margin-top:5px}.rows-presets{display:flex;gap:4px;margin-top:6px}.rows-presets button{background:#fff;border:1px solid #d4ddd7;border-radius:5px;color:#536158;padding:3px 7px;font-size:10px}.rows-presets button:hover{border-color:var(--accent);color:var(--accent)}.supplier-filter{color:#647069;font-size:11px;text-align:left}.supplier-filter select{min-width:165px;margin-top:3px;padding:7px 9px;font-size:11px}
     @media screen {
@@ -168,6 +169,7 @@
     <nav class="top-actions">
       <button class="nav-button" id="productLookupNav" type="button" title="Search the master product catalog">⌕ <span>SKU / Barcode</span></button>
       <button class="nav-button" id="hotlistNav" type="button" title="Open hotlist shift counts">▤ <span>Hotlist</span></button>
+      <button class="nav-button" id="communityFeedNav" type="button" title="Open the community feed" aria-label="Community Feed"><span>Community Feed</span></button>
       <button class="nav-button" id="settingsBtn" title="Open settings"><span class="gear">⚙</span> <span>Settings</span></button>
       <button class="nav-button muted" id="creditsBtn">About Us</button>
       <button class="nav-button reset" id="resetBtn" hidden>↻ <span>Start over</span></button>
@@ -257,6 +259,27 @@
       <div class="hotlist-toolbar"><input id="hotlistSearch" class="hotlist-search" type="search" autocomplete="off" placeholder="Search active category by SKU, barcode, or item name" aria-label="Search active hotlist category"><span id="hotlistCount" class="hotlist-status" aria-live="polite"></span></div>
       <div id="hotlistResults" class="hotlist-results" aria-live="polite"><p class="hotlist-empty">Loading hotlist items…</p></div>
       <div class="hotlist-footer"><span id="hotlistSaveStatus" class="hotlist-status" role="status" aria-live="polite"></span><button id="saveShiftData" class="primary-button" type="button">Save Shift Data</button></div>
+    </section>
+    <section id="communityFeedPanel" class="panel community-feed" hidden aria-labelledby="communityFeedHeading">
+      <header class="feed-heading">
+        <div><p class="section-kicker">COMMUNITY</p><h2 id="communityFeedHeading">Community Feed</h2><p>Share updates, photos, and ideas with everyone.</p></div>
+        <button class="secondary-button" id="backFromCommunityFeed" type="button">← Back to cycle count</button>
+      </header>
+      <form class="feed-compose" id="feedPostForm">
+        <div class="feed-compose-heading"><div><span class="feed-overline">CREATE POST</span><h3>What would you like to share?</h3></div><span class="feed-compose-mark" aria-hidden="true">＋</span></div>
+        <label for="feedPostName">Your Name</label>
+        <input id="feedPostName" name="name" type="text" maxlength="50" autocomplete="name" placeholder="Enter your name" required>
+        <label for="feedPostText">What's on your mind?</label>
+        <textarea id="feedPostText" name="text" maxlength="1000" rows="4" placeholder="Write a post for the community..." required></textarea>
+        <div class="feed-compose-actions">
+          <label class="feed-photo-picker" for="feedPostImage"><span aria-hidden="true">▧</span> Add a photo<input id="feedPostImage" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+          <span class="feed-image-name" id="feedImageName">No photo selected</span>
+          <button class="feed-publish" id="feedPublishButton" type="submit">Publish <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="feed-status" id="feedPostStatus" role="status" aria-live="polite"></p>
+      </form>
+      <div class="feed-list-heading"><div><span class="feed-overline">LATEST</span><h3>Community posts</h3></div><span id="feedConnectionStatus" class="feed-connection" role="status" aria-live="polite">Connecting…</span></div>
+      <div class="feed-post-list" id="feedPostList" aria-live="polite"><p class="feed-empty">Loading community posts…</p></div>
     </section>
   </main>
 
@@ -365,5 +388,6 @@
   <script src="layout-persistence.js"></script>
   <script src="print-controller.js"></script>
   <script src="product-lookup.js"></script>
+  <script type="module" src="feed.js"></script>
 </body>
 </html>

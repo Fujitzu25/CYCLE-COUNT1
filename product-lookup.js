@@ -5,6 +5,8 @@ const productLookupNavigation=$('productLookupNav');
 const productLookupPanel=$('productLookupPanel');
 const hotlistNavigation=$('hotlistNav');
 const hotlistPanel=$('hotlistPanel');
+const communityFeedNavigation=$('communityFeedNav');
+const communityFeedPanel=$('communityFeedPanel');
 const productLookupViews=[...document.querySelectorAll('.page-shell > section')];
 let previousProductLookupView=null;
 let activeLookupPanel=null;
@@ -273,6 +275,11 @@ hotlistNavigation.addEventListener('click',()=>{
 });
 $('backFromProductLookup').addEventListener('click',closeLookupPanel);
 $('backFromHotlist').addEventListener('click',closeLookupPanel);
+communityFeedNavigation.addEventListener('click',()=>{
+  if(activeLookupPanel===communityFeedPanel)closeLookupPanel();
+  else openLookupPanel(communityFeedPanel,communityFeedNavigation);
+});
+$('backFromCommunityFeed').addEventListener('click',closeLookupPanel);
 $('productLookupForm').addEventListener('submit',searchMasterCatalog);
 $('productLookupMode').addEventListener('change',()=>{
   productLookupRequest++;
