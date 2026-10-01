@@ -34,11 +34,9 @@ Withdrawal Qty is the cumulative quantity withdrawn so far for the shift. Log Wi
 
 ## Announcements
 
-Announcements are read-only for visitors and load from `comments.json`. Administrators publish updates by editing that JSON file with records containing `id`, `date`, `author`, `title`, and `message`, then publishing the site.
+The login page offers offline local accounts and Firebase online login. Local sessions and announcements stay in this browser profile. Online users authenticate with Firebase Auth and receive their role from `users/{uid}` in Firestore; Firestore rules restrict announcement writes to admins and prevent client-side role changes.
 
-The standalone login page uses two browser-local test accounts: `admin` / `admin123` and `user` / `user123`. Administrators can create additional `admin` or `user` accounts. Passwords are PBKDF2-hashed in local storage and sign-in state is kept in session storage. Local announcements published in the app are shared by tabs in the same browser profile and take precedence alongside the published feed.
-
-This is a convenience and UI restriction for a static site, not secure server authentication: account records, roles, inventory, and announcements are local to one browser profile and can be inspected or changed by that profile's owner. There is no cross-device account or announcement synchronization and no server-side authorization. Use a trusted managed device; do not store sensitive data here.
+See [FIREBASE_SETUP.md](FIREBASE_SETUP.md) for enabling Email/Password Authentication, creating the first admin profile, publishing Firestore rules, and deploying the static site. The Firebase web configuration is public by design; Firestore rules are the authorization boundary. Analytics is not initialized.
 
 ## Masterlist View
 

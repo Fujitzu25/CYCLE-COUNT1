@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function validAnnouncement(data) {
+      return data.keys().hasOnly(['title', 'message', 'authorId', 'authorName', 'createdAt'])
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() <= 100
+        && data.message is string
+        && data.message.size() > 0
+        && data.message.size() <= 2000;
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create, update, delete: if false;
+    }
+
+    match /announcements/{announcementId} {
+      allow read: if signedIn();
+      allow create: if isAdmin()
+        && validAnnouncement(request.resource.data)
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update: if isAdmin()
+        && validAnnouncement(request.resource.data)
+        && request.resource.data.authorId == resource.data.authorId
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isAdmin();
+    }
+  }
+}

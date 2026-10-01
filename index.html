@@ -171,15 +171,20 @@
       <div class="login-content">
         <a class="login-brand" href="#" aria-label="Fuji Cycle Count System"><span class="login-brand-mark">F</span><span>FUJI CYCLE COUNT SYSTEM</span></a>
         <div class="login-heading"><p class="login-eyebrow">OPERATIONS DESK</p><h1 id="loginTitle">Welcome back</h1><p>Sign in to continue to your inventory workspace.</p></div>
+        <div class="login-mode-switch" role="tablist" aria-label="Login mode">
+          <button class="login-mode-option is-active" type="button" role="tab" id="localLoginTab" data-login-mode="local" aria-selected="true">Local Machine Login</button>
+          <button class="login-mode-option" type="button" role="tab" id="onlineLoginTab" data-login-mode="online" aria-selected="false">Online Cloud Login</button>
+        </div>
+        <p class="login-mode-status" id="loginModeStatus">OFFLINE · THIS COMPUTER</p>
         <form id="loginForm" class="login-form" novalidate>
-          <label for="loginUsername">Username</label>
-          <input id="loginUsername" name="username" type="text" autocomplete="username" placeholder="Enter your username" required>
+          <label id="loginUsernameLabel" for="loginUsername">Username</label>
+          <input id="loginUsername" name="username" type="text" autocomplete="username" placeholder="Enter username" required>
           <label for="loginPassword">Password</label>
           <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
           <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
-          <button class="login-submit" type="submit"><span>Sign In</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+          <button class="login-submit" id="loginSubmit" type="submit"><span id="loginSubmitLabel">Sign In Locally</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
         </form>
-        <p class="login-footnote">FUJI CYCLE COUNT SYSTEM <span>·</span> LOCAL WORKSPACE</p>
+        <p class="login-footnote">FUJI CYCLE COUNT SYSTEM <span>·</span> <span id="loginFootnoteMode">LOCAL WORKSPACE</span></p>
       </div>
     </section>
   </main>
@@ -462,6 +467,7 @@
 
   <div class="auth-backdrop" id="authModal" hidden>
     <section class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <button class="auth-dialog-close" id="authModalClose" type="button" aria-label="Close account management">×</button>
       <p class="auth-kicker">FUJI CYCLE COUNT SYSTEM</p>
       <h2 id="authModalTitle">Sign in</h2>
       <p class="auth-copy" id="authModalCopy">Manage this browser profile and your local account.</p>
@@ -469,7 +475,7 @@
         <p class="auth-current-user" id="authCurrentUser"></p>
         <form id="authCreateUserForm" hidden>
           <h3>Create account</h3>
-          <label>Username<input id="authNewUsername" type="text" minlength="3" maxlength="40" autocomplete="off" required></label>
+          <label>Username / Email<input id="authNewUsername" type="text" maxlength="254" autocomplete="off" required></label>
           <label>Temporary password<input id="authNewPassword" type="password" minlength="10" autocomplete="new-password" required></label>
           <label>Role<select id="authNewRole"><option value="user">User</option><option value="admin">Administrator</option></select></label>
           <button class="primary-button" type="submit">Create account</button>
@@ -478,7 +484,7 @@
         <button class="secondary-button" id="authLogoutBtn" type="button">Log Out</button>
       </section>
       <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
-      <p class="auth-local-note">Accounts and sessions are stored only in this browser profile.</p>
+      <p class="auth-local-note" id="authStorageNote">Local accounts and sessions stay on this computer.</p>
     </section>
   </div>
 
@@ -592,6 +598,7 @@
   <script src="masterlist.js"></script>
   <script src="shelftag.js"></script>
   <script src="announcements.js"></script>
-  <script src="auth.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-auth.js"></script>
 </body>
 </html>
