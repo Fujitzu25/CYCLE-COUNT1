@@ -32,7 +32,12 @@ async function loadAnnouncements(){
     if(!response.ok)throw new Error(`Announcement request failed (${response.status})`);
     const payload=await response.json();
     if(!Array.isArray(payload))throw new Error('Announcement data must be a JSON array.');
-    const announcements=payload.filter(item=>item&&typeof item==='object'&&item.title&&item.message)
+    let localAnnouncements=[];
+    try{
+      const stored=JSON.parse(localStorage.getItem('fuji-cycle-announcements-v1')||'[]');
+      if(Array.isArray(stored))localAnnouncements=stored.filter(item=>item&&item.title&&item.message);
+    }catch(error){console.warn('Could not read local announcements:',error)}
+    const announcements=[...localAnnouncements,...payload.filter(item=>item&&typeof item==='object'&&item.title&&item.message)]
       .sort((left,right)=>String(right.date||'').localeCompare(String(left.date||'')));
     announcementList.replaceChildren(...announcements.map(createAnnouncement));
     if(!announcements.length){
@@ -42,6 +47,7 @@ async function loadAnnouncements(){
       announcementList.append(empty);
     }
     announcementStatus.textContent=`${announcements.length} announcement${announcements.length===1?'':'s'}`;
+    document.dispatchEvent(new CustomEvent('announcements-updated',{detail:{announcements}}));
   }catch(error){
     console.error('Could not load announcements:',error);
     announcementStatus.textContent='Announcements are temporarily unavailable.';
@@ -51,4 +57,7 @@ async function loadAnnouncements(){
     announcementList.replaceChildren(unavailable);
   }
 }
+window.refreshAnnouncements=loadAnnouncements;
+window.addEventListener('storage',event=>{if(event.key==='fuji-cycle-announcements-v1')loadAnnouncements()});
+document.addEventListener('authchange',loadAnnouncements);
 loadAnnouncements();

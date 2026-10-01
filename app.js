@@ -324,13 +324,13 @@ async function exportLocalBackup(){
 }
 
 function createLocalHistoryPanel(){
-  const nav=document.querySelector('.top-actions');
+  const nav=document.querySelector('.utility-actions');
   const button=document.createElement('button');
   button.type='button';
   button.className='nav-button muted';
   button.id='localHistoryBtn';
-  button.textContent='Local history';
-  nav.insertBefore(button,$('resetBtn'));
+  button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Local History</span>';
+  nav.insertBefore(button,$('creditsBtn'));
 
   const style=document.createElement('style');
   style.textContent='.local-history-modal{width:min(680px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow:auto}.local-history-list{display:grid;gap:8px;max-height:48vh;overflow:auto;margin:14px 0}.local-history-entry{display:grid;grid-template-columns:minmax(140px,1fr) minmax(0,2fr);gap:4px 12px;padding:10px 0;border-bottom:1px solid #e5eae6;font-size:12px}.local-history-entry time{color:#536158}.local-history-entry strong{color:#25332b}.local-history-entry p{grid-column:1/-1;margin:0;color:#66726b;overflow-wrap:anywhere}.local-history-empty{padding:18px 0;color:#66726b;font-size:13px}@media(max-width:600px){.local-history-entry{grid-template-columns:1fr}}';

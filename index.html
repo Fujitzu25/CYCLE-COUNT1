@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="home-dashboard.css">
   <link rel="stylesheet" href="announcements.css">
   <link rel="stylesheet" href="masterlist.css">
+  <link rel="stylesheet" href="auth.css">
   <style>
     .rows-control{display:flex;align-items:center;gap:7px}.rows-control input{margin-top:5px}.rows-presets{display:flex;gap:4px;margin-top:6px}.rows-presets button{background:#fff;border:1px solid #d4ddd7;border-radius:5px;color:#536158;padding:3px 7px;font-size:10px}.rows-presets button:hover{border-color:var(--accent);color:var(--accent)}.supplier-filter{color:#647069;font-size:11px;text-align:left}.supplier-filter select{min-width:165px;margin-top:3px;padding:7px 9px;font-size:11px}
     @media screen {
@@ -160,26 +161,52 @@
     }
   </style>
 </head>
-<body>
+<body class="auth-logged-out">
+  <main class="login-page" id="loginPage">
+    <section class="login-card" aria-labelledby="loginTitle">
+      <div class="login-visual">
+        <img src="logo.jpg" alt="Fuji Cycle Count System Operations Desk" class="login-brand-image">
+        <div class="login-visual-caption"><span>FUJI CYCLE COUNT SYSTEM</span><strong>Operations, counted on.</strong></div>
+      </div>
+      <div class="login-content">
+        <a class="login-brand" href="#" aria-label="Fuji Cycle Count System"><span class="login-brand-mark">F</span><span>FUJI CYCLE COUNT SYSTEM</span></a>
+        <div class="login-heading"><p class="login-eyebrow">OPERATIONS DESK</p><h1 id="loginTitle">Welcome back</h1><p>Sign in to continue to your inventory workspace.</p></div>
+        <form id="loginForm" class="login-form" novalidate>
+          <label for="loginUsername">Username</label>
+          <input id="loginUsername" name="username" type="text" autocomplete="username" placeholder="Enter your username" required>
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required>
+          <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
+          <button class="login-submit" type="submit"><span>Sign In</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+        </form>
+        <p class="login-footnote">FUJI CYCLE COUNT SYSTEM <span>·</span> LOCAL WORKSPACE</p>
+      </div>
+    </section>
+  </main>
+  <div id="appShell" hidden>
   <header class="topbar">
     <div class="brand-wrap">
       <div class="brand-mark">F</div>
       <div>
-          <div class="brand-name">FUJI <span>CYCLE COUNT SHEET GENERATOR</span></div>
+          <div class="brand-name">FUJI CYCLE COUNT SHEET GENERATOR</div>
           <div class="brand-subtitle">CYCLE COUNT SYSTEM</div>
       </div>
     </div>
-    <nav class="top-actions">
-      <button class="nav-button" id="homeNav" type="button" title="Open Home dashboard" aria-current="page">⌂ <span>Home</span></button>
-      <button class="nav-button" id="countSheetNav" type="button" title="Open Count Sheet">▦ <span>Count Sheet</span></button>
-      <button class="nav-button" id="shelfTagNav" type="button" title="Open Shelftag / PP Tag Printing">▤ <span>Shelf Tag</span></button>
-      <button class="nav-button" id="productLookupNav" type="button" title="Search the master product catalog">⌕ <span>Product Lookup</span></button>
-      <button class="nav-button" id="masterlistNav" type="button" title="Browse uploaded master data">▤ <span>Masterlist</span></button>
-      <button class="nav-button" id="announcementsNav" type="button" title="Read announcements and updates">▤ <span>Announcements / Updates</span></button>
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <button class="nav-button" id="homeNav" type="button" title="Open Home dashboard" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
+      <button class="nav-button" id="countSheetNav" type="button" title="Open Count Sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h3m2 0h3m-8 4h3m2 0h3m-8 3h3m2 0h3"/></svg><span>Count Sheet</span></button>
+      <button class="nav-button" id="shelfTagNav" type="button" title="Open Shelftag / PP Tag Printing"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13 11 22l-9-9V2h11z"/><circle cx="7" cy="7" r="1"/></svg><span>Shelf Tag</span></button>
+      <button class="nav-button" id="productLookupNav" type="button" title="Search the master product catalog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span>Product Lookup</span></button>
+      <button class="nav-button" id="masterlistNav" type="button" title="Browse uploaded master data"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4zM4 9h16M9 9v11m6-11v11"/></svg><span>Masterlist</span></button>
+    </nav>
+    <nav class="utility-actions" aria-label="Tools and account">
+      <button class="nav-button" id="announcementsNav" type="button" title="Read announcements and updates"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11a8 8 0 0 1 16 0v5l2 2H2l2-2zM9 21h6"/></svg><span>Updates</span></button>
       <div hidden><button id="hotlistNav" type="button">Hotlist</button></div>
-      <button class="nav-button" id="settingsBtn" title="Open settings"><span class="gear">⚙</span> <span>Settings</span></button>
-      <button class="nav-button muted" id="creditsBtn">About Us</button>
-      <button class="nav-button reset" id="resetBtn" hidden>↻ <span>Start over</span></button>
+      <button class="nav-button" id="settingsBtn" type="button" title="Open settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 13.5a7 7 0 0 0 0-3l2-1.5-2-3.5-2.4 1a7 7 0 0 0-2.6-1.5L13.5 2h-3L10 5a7 7 0 0 0-2.6 1.5L5 5.5l-2 3.5 2 1.5a7 7 0 0 0 0 3L3 15l2 3.5 2.4-1A7 7 0 0 0 10 19l.5 3h3l.5-3a7 7 0 0 0 2.6-1.5l2.4 1 2-3.5z" transform="translate(-1 -1)"/></svg><span>Settings</span></button>
+      <button class="nav-button" id="creditsBtn" type="button" title="About Us and help"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.4 1.6c-1.2 1.1-2 1.4-2 3m0 3h.01"/></svg><span>About</span></button>
+      <button class="nav-button reset" id="resetBtn" type="button" title="Start over" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8m0-5v5h5"/></svg><span>Start over</span></button>
+      <button class="nav-button profile-button" id="authProfileBtn" type="button" title="Sign in"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span id="authProfileLabel">Sign in</span></button>
+      <button class="nav-button auth-header-logout" id="authHeaderLogoutBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3m9-9h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg><span>Log Out</span></button>
     </nav>
   </header>
 
@@ -290,6 +317,14 @@
     </section>
     <section id="announcementsPanel" class="announcements-panel" hidden aria-labelledby="announcementsHeading">
       <header class="announcements-header"><div><p class="announcements-eyebrow">ADMINISTRATOR UPDATES</p><h2 id="announcementsHeading">Announcements / Updates</h2><p>Read-only notices for the Fuji inventory workspace.</p></div><span class="announcements-readonly"><span aria-hidden="true">●</span> READ ONLY</span></header>
+      <section class="announcement-editor" id="announcementEditor" hidden>
+        <h3>Publish an update</h3>
+        <form id="announcementForm">
+          <label>Title<input id="announcementTitle" type="text" maxlength="100" required></label>
+          <label>Announcement<textarea id="announcementMessage" rows="4" maxlength="2000" required></textarea></label>
+          <button class="primary-button" type="submit">Publish announcement</button>
+        </form>
+      </section>
       <div class="announcements-status" id="announcementsStatus" role="status" aria-live="polite">Loading announcements…</div>
       <div class="announcement-list" id="announcementList" aria-live="polite"></div>
       <footer class="announcements-footer"><span>FUJI CYCLE COUNT SYSTEM</span><span>Updates are published by an administrator.</span></footer>
@@ -423,6 +458,29 @@
       <button id="backFromShelfTag" type="button" hidden>Back to cycle count</button>
     </section>
   </main>
+  </div>
+
+  <div class="auth-backdrop" id="authModal" hidden>
+    <section class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+      <p class="auth-kicker">FUJI CYCLE COUNT SYSTEM</p>
+      <h2 id="authModalTitle">Sign in</h2>
+      <p class="auth-copy" id="authModalCopy">Manage this browser profile and your local account.</p>
+      <section class="auth-account-panel" id="authAccountPanel" hidden>
+        <p class="auth-current-user" id="authCurrentUser"></p>
+        <form id="authCreateUserForm" hidden>
+          <h3>Create account</h3>
+          <label>Username<input id="authNewUsername" type="text" minlength="3" maxlength="40" autocomplete="off" required></label>
+          <label>Temporary password<input id="authNewPassword" type="password" minlength="10" autocomplete="new-password" required></label>
+          <label>Role<select id="authNewRole"><option value="user">User</option><option value="admin">Administrator</option></select></label>
+          <button class="primary-button" type="submit">Create account</button>
+        </form>
+        <div class="auth-user-list" id="authUserList"></div>
+        <button class="secondary-button" id="authLogoutBtn" type="button">Log Out</button>
+      </section>
+      <p class="auth-status" id="authStatus" role="status" aria-live="polite"></p>
+      <p class="auth-local-note">Accounts and sessions are stored only in this browser profile.</p>
+    </section>
+  </div>
 
   <div class="toast" id="toast" role="status"></div>
   <div class="modal-backdrop" id="developersModal" hidden>
@@ -534,5 +592,6 @@
   <script src="masterlist.js"></script>
   <script src="shelftag.js"></script>
   <script src="announcements.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>

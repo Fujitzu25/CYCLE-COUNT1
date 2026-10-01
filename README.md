@@ -36,6 +36,10 @@ Withdrawal Qty is the cumulative quantity withdrawn so far for the shift. Log Wi
 
 Announcements are read-only for visitors and load from `comments.json`. Administrators publish updates by editing that JSON file with records containing `id`, `date`, `author`, `title`, and `message`, then publishing the site.
 
+The standalone login page uses two browser-local test accounts: `admin` / `admin123` and `user` / `user123`. Administrators can create additional `admin` or `user` accounts. Passwords are PBKDF2-hashed in local storage and sign-in state is kept in session storage. Local announcements published in the app are shared by tabs in the same browser profile and take precedence alongside the published feed.
+
+This is a convenience and UI restriction for a static site, not secure server authentication: account records, roles, inventory, and announcements are local to one browser profile and can be inspected or changed by that profile's owner. There is no cross-device account or announcement synchronization and no server-side authorization. Use a trusted managed device; do not store sensitive data here.
+
 ## Masterlist View
 
 Open Masterlist from the top navigation and upload a Pcount monitoring workbook. The importer reads `CC Masterlist` plus `CC Sched`, `CC Variance Details`, and `IRA% IRA Summary` when present. Parsed master rows and available secondary sheets are stored in this browser's IndexedDB and restored on reload. The dashboard filters CCD and department, searches SKU/description/vendor fields, sorts by column, and renders 50 or 100 rows per page. Uploaded workbook contents are not uploaded to the website.
