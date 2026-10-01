@@ -22,6 +22,12 @@ python3 scripts/build_master_search.py "ITEM MASTER AS OF 09-02-2026 1.xlsx" --d
 
 `hotlist_inventory.json` defines the hotlist rows and their categories. Replace the demo items with the store's actual SKUs. Keep SKUs as strings to preserve leading zeroes; use `MILK`, `CIGARETTES`, or `LIQUORS` for `category`. Each row includes item details, a direct image URL, and starting count values. Leave `price` and `locator` empty to populate them from the masterfile.
 
-Open Hotlist from the top navigation and upload `PRICE AND LOCATOR CODES.xlsx`. The importer joins `Sku` / `Retail Cost` and `sku_no` / `locator_code` columns by SKU, supports multiple locators per SKU, and caches the imported mapping in that browser. Product photos use each row's direct `image_url` first, then try an exact barcode lookup in Open Food Facts. If neither provides a photo, the card shows a Google Images link for the product. Shift edits are saved locally as you type, and Save Shift Data also logs a complete snapshot to the browser console.
+`master-details.json` contains only SKU, price, and locator values and is loaded automatically by catalog search and Hotlist. Rebuild it after replacing the local, gitignored workbook:
+
+```sh
+python3 scripts/build_price_locator_index.py
+```
+
+The importer joins `Sku` / `Retail Cost` and `sku_no` / `locator_code` columns by SKU and supports multiple locators per SKU. The full workbook remains gitignored; only the reduced mapping is published. Hotlist can still load a workbook manually for browser-local updates. Product photos use each row's direct `image_url` first, then try an exact barcode lookup in Open Food Facts. If neither provides a photo, the card shows a Google Images link for the product. Shift edits are saved locally as you type, and Save Shift Data also logs a complete snapshot to the browser console.
 
 Withdrawal Qty is the cumulative quantity withdrawn so far for the shift. Log Withdrawal transfers only the amount not already applied, so clicking it again does not double-count stock. Serve the project through a static web server (for example, GitHub Pages) so the JSON and catalog files can be fetched.

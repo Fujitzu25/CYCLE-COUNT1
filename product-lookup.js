@@ -450,6 +450,34 @@ function normalizeMasterSku(value){
   return String(value??'').trim().replace(/\.0$/,'').toUpperCase();
 }
 
+async function loadPublishedMasterDetails(){
+  try{
+    const response=await fetch(new URL('master-details.json',document.baseURI));
+    if(response.status===404){
+      $('masterfileStatus').textContent='Published mapping unavailable. Upload the workbook to load price and locator details.';
+      return;
+    }
+    if(!response.ok)throw new Error(`Published master data request failed (${response.status})`);
+    const publishedDetails=await response.json();
+    if(!publishedDetails||typeof publishedDetails!=='object'||Array.isArray(publishedDetails))throw new Error('Published master data is invalid.');
+    const cachedDetails=masterProductDetails;
+    masterProductDetails={...publishedDetails};
+    Object.entries(cachedDetails).forEach(([sku,details])=>{
+      masterProductDetails[sku]={
+        ...(publishedDetails[sku]||{}),
+        price:details.price||publishedDetails[sku]?.price||'',
+        locator:details.locator||publishedDetails[sku]?.locator||''
+      };
+    });
+    $('masterfileStatus').textContent=`Using price and locator data for ${Object.keys(masterProductDetails).length.toLocaleString()} SKUs.`;
+    renderHotlist();
+    if($('productLookupInput').value.trim())searchMasterCatalog({preventDefault(){}});
+  }catch(error){
+    $('masterfileStatus').textContent='Could not load published price and locator details. Upload the workbook to continue.';
+    console.error('Could not load published price and locator data:',error);
+  }
+}
+
 async function importPriceLocatorMaster(file){
   if(typeof XLSX==='undefined')throw new Error('Spreadsheet reader is unavailable. Check your internet connection.');
   const workbook=XLSX.read(await file.arrayBuffer(),{type:'array',raw:false});
@@ -531,6 +559,7 @@ $('masterfileUpload').addEventListener('change',async event=>{
 document.querySelectorAll('[data-hotlist-category]').forEach(tab=>tab.setAttribute('aria-selected',String(tab.dataset.hotlistCategory===activeHotlistCategory)));
 if(Object.keys(masterProductDetails).length)$('masterfileStatus').textContent=`Using saved price and locator data for ${Object.keys(masterProductDetails).length.toLocaleString()} SKUs.`;
 loadHotlist();
+loadPublishedMasterDetails();
 
 document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&activeLookupPanel)closeLookupPanel();
