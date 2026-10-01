@@ -100,13 +100,37 @@ def write_shard_record(output_dir, row, writers, counts):
         counts[prefix] += 1
 
 
-def build(workbook_path, output_dir):
+def write_description_record(output_dir, row, writers, counts):
+    words = set(re.findall(r"[A-Z0-9]+", row[2].upper()))
+    compact_row = [row[0], row[2]]
+    for prefix in {search_prefix(word) for word in words if word}:
+        writer = open_shard(output_dir, prefix, writers, counts)
+        if counts[prefix]:
+            writer.write(",")
+        json.dump(compact_row, writer, ensure_ascii=False, separators=(",", ":"))
+        counts[prefix] += 1
+
+
+def clear_shards(output_dir):
     os.makedirs(output_dir, exist_ok=True)
     for name in os.listdir(output_dir):
         if name.endswith(".json.gz"):
             os.remove(os.path.join(output_dir, name))
+
+
+def build(workbook_path, output_dir=None, description_output_dir=None, description_only=False):
+    if description_only and not description_output_dir:
+        raise ValueError("--description-only requires --description-output.")
+    if not description_only:
+        if not output_dir:
+            raise ValueError("A catalog output directory is required unless --description-only is used.")
+        clear_shards(output_dir)
+    if description_output_dir:
+        clear_shards(description_output_dir)
     writers = {}
     counts = {}
+    description_writers = {}
+    description_counts = {}
     total = 0
     try:
         with zipfile.ZipFile(workbook_path) as archive:
@@ -158,7 +182,10 @@ def build(workbook_path, output_dir):
                                     fields["VENDOR_COMPANY_NAME"],
                                     sheet_name,
                                 ]
-                                write_shard_record(output_dir, record, writers, counts)
+                                if not description_only:
+                                    write_shard_record(output_dir, record, writers, counts)
+                                if description_output_dir:
+                                    write_description_record(description_output_dir, record, description_writers, description_counts)
                                 sheet_rows += 1
                                 total += 1
                         row_element.clear()
@@ -167,19 +194,27 @@ def build(workbook_path, output_dir):
         for prefix, writer in writers.items():
             writer.write("]")
             writer.close()
+        for prefix, writer in description_writers.items():
+            writer.write("]")
+            writer.close()
 
-    print(f"Wrote {total:,} product rows across {len(counts)} shards to {output_dir}")
-    for prefix, count in sorted(counts.items()):
-        print(f"  {prefix}: {count:,}")
+    if not description_only:
+        print(f"Wrote {total:,} product rows across {len(counts)} shards to {output_dir}")
+        for prefix, count in sorted(counts.items()):
+            print(f"  {prefix}: {count:,}")
+    if description_output_dir:
+        print(f"Wrote {total:,} product rows across {len(description_counts)} description shards to {description_output_dir}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("workbook", help="Path to the item-master .xlsx workbook")
-    parser.add_argument("output", help="Directory where gzip JSON shards will be written")
+    parser.add_argument("output", nargs="?", help="Directory where gzip JSON shards will be written")
+    parser.add_argument("--description-output", help="Optional directory for description search shards")
+    parser.add_argument("--description-only", action="store_true", help="Build only the description index")
     arguments = parser.parse_args()
     try:
-        build(arguments.workbook, arguments.output)
+        build(arguments.workbook, arguments.output, arguments.description_output, arguments.description_only)
     except (OSError, ValueError, zipfile.BadZipFile, ET.ParseError) as error:
         print(f"Could not build master search index: {error}", file=sys.stderr)
         sys.exit(1)

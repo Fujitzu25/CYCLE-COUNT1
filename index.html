@@ -82,21 +82,60 @@
     .product-lookup-form{max-width:900px;margin:26px 0 12px}
     .product-lookup-form>label{display:block;margin-bottom:7px;color:#405046;font-size:12px;font-weight:700}
     .product-lookup-input-row{display:flex;gap:8px}
-    .product-lookup-input-row input{flex:1;min-width:0;padding:11px 13px;border:1px solid #cbd8d1;border-radius:8px;background:#fff;color:#17201d;font:inherit}
+    .product-lookup-input-row input{flex:1;min-width:0;margin:0;padding:11px 13px;border:1px solid #cbd8d1;border-radius:8px;background:#fff;color:#17201d;font:inherit}
+    .product-lookup-input-row input::placeholder{color:#748078;opacity:1}
+    .product-lookup-input-row input:focus{border-color:#08785b;outline:3px solid #d9f5e8;outline-offset:1px;color:#17201d}
+    .product-lookup-input-row select{flex:0 0 160px;width:auto;min-width:0;margin:0;padding:11px 12px;border:1px solid #cbd8d1;border-radius:8px;background:#fff;color:#17201d;font:inherit}
     .product-lookup-form small,.product-lookup-status{color:#68766f;font-size:12px}
     .product-lookup-form small{display:block;margin-top:7px}
     .product-lookup-status{min-height:22px;margin:17px 0 10px}
     .product-lookup-results{border-top:1px solid #dce5df}
-    .product-lookup-result{padding:15px 2px;border-bottom:1px solid #e1e8e4}
-    .product-lookup-result-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
-    .product-lookup-result h3{margin:0;color:#1e2a25;font-size:16px}
-    .product-lookup-sku{flex:none;color:#08785b;font-size:12px;font-weight:700}
-    .product-lookup-details{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 18px;margin:0}
-    .product-lookup-details div{min-width:0}
-    .product-lookup-details dt{color:#7a8780;font-size:10px;font-weight:700;text-transform:uppercase}
-    .product-lookup-details dd{margin:3px 0 0;color:#293831;font-size:13px;overflow-wrap:anywhere}
+    .product-lookup-result{padding:20px 0;border-bottom:1px solid #cfdad4}
+    .product-lookup-result-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;padding-bottom:11px;border-bottom:1px solid #e5ebe7}
+    .product-lookup-result h3{margin:0;color:#1e2a25;font-size:18px;line-height:1.35}
+    .product-lookup-sku{flex:none;padding:5px 9px;border:1px solid #d5e6dd;border-radius:4px;background:#f1f7f4;color:#08785b;font-size:12px;font-weight:700}
+    .product-lookup-details{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0;border-top:1px solid #dce5df;border-left:1px solid #dce5df}
+    .product-lookup-details div{min-width:0;padding:10px 12px;border-right:1px solid #dce5df;border-bottom:1px solid #dce5df;background:#fff}
+    .product-lookup-details .product-lookup-detail-upc-barcode,.product-lookup-details .product-lookup-detail-category{grid-column:span 2}
+    .product-lookup-details dt{color:#6b7972;font-size:10px;font-weight:700;text-transform:uppercase}
+    .product-lookup-details dd{margin:5px 0 0;color:#24332c;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
     .product-lookup-empty{padding:26px 4px;color:#68766f;text-align:center}
-    @media(max-width:700px){.product-lookup-input-row{display:grid;grid-template-columns:1fr 1fr}.product-lookup-input-row input{grid-column:1/-1}.product-lookup-details{grid-template-columns:repeat(2,minmax(0,1fr))}.product-lookup-result-heading{display:block}.product-lookup-sku{display:block;margin-top:5px}}
+    .product-lookup-result-content{display:grid;grid-template-columns:minmax(0,1fr) 118px;gap:18px;align-items:start}
+    .product-image-frame{position:relative;display:grid;place-items:center;width:118px;height:118px;overflow:hidden;border:1px solid #dce5df;border-radius:7px;background:#f4f7f5;color:#68766f;text-align:center}
+    .product-image-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
+    .product-image-placeholder{padding:10px;font-size:11px;line-height:1.4}
+    .product-image-google-link{position:absolute;z-index:2;right:3px;bottom:3px;left:3px;padding:4px 2px;border-radius:4px;background:rgba(255,255,255,.94);color:#08785b;font-size:10px;font-weight:700;text-align:center;text-decoration:none}
+    .product-image-google-link:hover{text-decoration:underline}
+    .hotlist-workspace{margin-top:30px;padding-top:22px;border-top:2px solid #dce5df}
+    .hotlist-heading,.hotlist-toolbar,.hotlist-footer{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .hotlist-heading h3{margin:0;color:#1e2a25;font-size:20px}
+    .hotlist-heading p{margin:4px 0 0;color:#68766f;font-size:12px}
+    .masterfile-upload{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .masterfile-upload input{max-width:250px;font:inherit;font-size:12px}
+    .masterfile-status,.hotlist-status{color:#68766f;font-size:12px}
+    .hotlist-tabs{display:flex;gap:8px;margin:20px 0 14px;overflow:auto}
+    .hotlist-tab{flex:1;min-width:130px;padding:11px 14px;border:1px solid #cbd8d1;border-radius:7px;background:#fff;color:#405046;font:inherit;font-weight:700;cursor:pointer}
+    .hotlist-tab[aria-selected="true"]{border-color:#08785b;background:#08785b;color:#fff}
+    .hotlist-toolbar{margin-bottom:14px}
+    .hotlist-search{width:min(100%,520px);padding:10px 12px;border:1px solid #cbd8d1;border-radius:7px;background:#fff;color:#17201d;font:inherit}
+    .hotlist-results{border-top:1px solid #dce5df}
+    .hotlist-result{display:grid;grid-template-columns:118px minmax(0,1fr);gap:18px;padding:16px 2px;border-bottom:1px solid #e1e8e4}
+    .hotlist-result .product-lookup-result-content{display:block}
+    .hotlist-result .product-image-frame{grid-column:1;grid-row:1 / span 3}
+    .hotlist-result-main{min-width:0}
+    .hotlist-result-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+    .hotlist-result-heading h4{margin:0;color:#1e2a25;font-size:16px}
+    .hotlist-badge{flex:none;padding:4px 7px;border-radius:4px;background:#edf4f0;color:#08785b;font-size:10px;font-weight:700}
+    .hotlist-metadata{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px}
+    .hotlist-fields{display:grid;grid-template-columns:repeat(4,minmax(100px,1fr)) auto;gap:8px;align-items:end}
+    .hotlist-fields label{display:grid;gap:5px;color:#68766f;font-size:10px;font-weight:700;text-transform:uppercase}
+    .hotlist-fields input{width:100%;min-width:0;padding:8px;border:1px solid #cbd8d1;border-radius:6px;color:#17201d;font:inherit;font-size:13px}
+    .hotlist-log-button{min-height:36px;padding:8px 12px;border:0;border-radius:6px;background:#245f4c;color:#fff;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+    .hotlist-footer{justify-content:flex-end;margin-top:14px}
+    .hotlist-empty{padding:26px 4px;color:#68766f;text-align:center}
+    @media(max-width:700px){.product-lookup-input-row{display:grid;grid-template-columns:minmax(100px,.8fr) minmax(0,1.2fr)}.product-lookup-input-row input{grid-column:auto}.product-lookup-details{grid-template-columns:repeat(2,minmax(0,1fr))}.product-lookup-details .product-lookup-detail-upc-barcode,.product-lookup-details .product-lookup-detail-category{grid-column:1/-1}.product-lookup-result-heading{align-items:flex-start}.product-lookup-sku{flex:none}}
+    @media(max-width:760px){.hotlist-heading,.hotlist-toolbar{align-items:stretch;flex-direction:column}.hotlist-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.hotlist-log-button{grid-column:1/-1}.hotlist-metadata{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:520px){.product-lookup-result-content{grid-template-columns:76px minmax(0,1fr);gap:12px}.product-image-frame{width:76px;height:76px}.hotlist-result{grid-template-columns:76px minmax(0,1fr);gap:12px}.hotlist-result-heading{display:block}.hotlist-badge{display:inline-block;margin-top:5px}.masterfile-upload input{max-width:100%}}
     @media(max-width:900px){#countSheetPanel .print-toolbar{display:grid;grid-template-columns:minmax(0,1fr)}#countSheetPanel .generated-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch;width:100%}#countSheetPanel .supplier-filter,#countSheetPanel .supplier-filter select{width:100%;min-width:0}.supplier-selection-list{max-height:190px}.supplier-selection-actions{grid-column:1/-1;width:max-content}.generated-actions>#backCountData,.generated-actions>#printSheetBtn,.generated-actions>#exportSheetBtn{width:100%;height:auto;min-height:44px}}
     #countSheetPanel .reference-signoff{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px 10px;margin-top:12px}
     @media print{.reference-table .supplier-group-row td{height:auto!important;padding:3px 5px!important;line-height:1.1!important}.reference-table .supplier-group-label{font-size:8px!important;letter-spacing:0!important}#countSheetPanel .reference-signoff{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:10px!important;gap:4px 8px!important;font-size:8px!important}.count-sheet-page{break-inside:avoid;page-break-inside:avoid}}
@@ -127,6 +166,7 @@
     </div>
     <nav class="top-actions">
       <button class="nav-button" id="productLookupNav" type="button" title="Search the master product catalog">⌕ <span>SKU / Barcode</span></button>
+      <button class="nav-button" id="hotlistNav" type="button" title="Open hotlist shift counts">▤ <span>Hotlist</span></button>
       <button class="nav-button" id="settingsBtn" title="Open settings"><span class="gear">⚙</span> <span>Settings</span></button>
       <button class="nav-button muted" id="creditsBtn">About Us</button>
       <button class="nav-button reset" id="resetBtn" hidden>↻ <span>Start over</span></button>
@@ -190,16 +230,32 @@
         <button class="secondary-button" id="backFromProductLookup" type="button">← Back to cycle count</button>
       </div>
       <form id="productLookupForm" class="product-lookup-form" role="search">
-        <label for="productLookupInput">SKU or barcode</label>
+        <label for="productLookupInput">Search master catalog</label>
         <div class="product-lookup-input-row">
+          <select id="productLookupMode" aria-label="Search by"><option value="sku">SKU</option><option value="barcode">Barcode</option><option value="description">Description</option></select>
           <input id="productLookupInput" type="search" inputmode="search" autocomplete="off" placeholder="Enter at least 2 characters" aria-describedby="productLookupHint">
           <button class="primary-button" type="submit">Search</button>
           <button class="secondary-button" id="clearProductLookup" type="button">Clear</button>
         </div>
-        <small id="productLookupHint">Searches by SKU or UPC/barcode. Partial codes are supported.</small>
+        <small id="productLookupHint">Searches by SKU. Partial codes are supported.</small>
       </form>
       <div id="productLookupStatus" class="product-lookup-status" role="status" aria-live="polite">The master catalog loads when you search.</div>
       <div class="product-lookup-results" id="productLookupResults" aria-live="polite"></div>
+    </section>
+    <section id="hotlistPanel" class="panel hotlist-workspace" hidden aria-labelledby="hotlistHeading">
+      <div class="panel-heading hotlist-heading">
+        <div><p class="section-kicker">SHIFT INVENTORY</p><h2 id="hotlistHeading">HOTLIST SKU'S</h2><p>Counts are saved in this browser; price and locator are matched by SKU from your workbook.</p></div>
+        <div class="heading-actions"><label class="masterfile-upload"><span>Price & locator masterfile</span><input id="masterfileUpload" type="file" accept=".xlsx,.xls,.csv"></label><button class="secondary-button" id="backFromHotlist" type="button">← Back to cycle count</button></div>
+      </div>
+      <div id="masterfileStatus" class="masterfile-status" role="status" aria-live="polite">Upload the PRICE AND LOCATOR CODES workbook to add price and locator details.</div>
+      <nav class="hotlist-tabs" role="tablist" aria-label="Hotlist category">
+        <button class="hotlist-tab" type="button" role="tab" data-hotlist-category="MILK" aria-selected="true">🥛 MILK</button>
+        <button class="hotlist-tab" type="button" role="tab" data-hotlist-category="CIGARETTES" aria-selected="false">🚬 CIGARETTES</button>
+        <button class="hotlist-tab" type="button" role="tab" data-hotlist-category="LIQUORS" aria-selected="false">🍾 LIQUORS</button>
+      </nav>
+      <div class="hotlist-toolbar"><input id="hotlistSearch" class="hotlist-search" type="search" autocomplete="off" placeholder="Search active category by SKU, barcode, or item name" aria-label="Search active hotlist category"><span id="hotlistCount" class="hotlist-status" aria-live="polite"></span></div>
+      <div id="hotlistResults" class="hotlist-results" aria-live="polite"><p class="hotlist-empty">Loading hotlist items…</p></div>
+      <div class="hotlist-footer"><span id="hotlistSaveStatus" class="hotlist-status" role="status" aria-live="polite"></span><button id="saveShiftData" class="primary-button" type="button">Save Shift Data</button></div>
     </section>
   </main>
 

@@ -1,0 +1,53 @@
+[
+  {
+    "sku": "DEMO-MILK-001",
+    "name": "Example Fresh Milk 1L",
+    "barcode": "",
+    "supplier": "Example Supplier",
+    "department": "DAIRY",
+    "product_category": "MILK",
+    "master_tab": "HYPERMART",
+    "category": "MILK",
+    "price": "",
+    "locator": "",
+    "image_url": "",
+    "buffer_qty": 0,
+    "display_qty": 0,
+    "withdrawal_qty": 0,
+    "previous_day_sales": 0
+  },
+  {
+    "sku": "DEMO-CIG-001",
+    "name": "Example Cigarette Product",
+    "barcode": "",
+    "supplier": "Example Supplier",
+    "department": "TOBACCO",
+    "product_category": "CIGARETTES",
+    "master_tab": "HYPERMART",
+    "category": "CIGARETTES",
+    "price": "",
+    "locator": "",
+    "image_url": "",
+    "buffer_qty": 0,
+    "display_qty": 0,
+    "withdrawal_qty": 0,
+    "previous_day_sales": 0
+  },
+  {
+    "sku": "DEMO-LIQ-001",
+    "name": "Example Liquor Product",
+    "barcode": "",
+    "supplier": "Example Supplier",
+    "department": "LIQUOR",
+    "product_category": "LIQUORS",
+    "master_tab": "HYPERMART",
+    "category": "LIQUORS",
+    "price": "",
+    "locator": "",
+    "image_url": "",
+    "buffer_qty": 0,
+    "display_qty": 0,
+    "withdrawal_qty": 0,
+    "previous_day_sales": 0
+  }
+]
