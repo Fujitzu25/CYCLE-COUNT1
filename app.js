@@ -6,7 +6,7 @@ const sampleItems=[
   {supplier:'Mabuhay Foods',locator:'WH-G-B3L1',sku:'19221',barcode:'480034401227',description:'MANG TOMATO SAUCE 250G',copy:'006'},
   {supplier:'Mabuhay Foods',locator:'WH-G-B3L1',sku:'33018',barcode:'480034400711',description:'BEAR BRAND MILK POWDER',copy:'003'}
 ];
-let items=[];let currentStep=1;var start=0;
+let items=[];let currentStep=1;var start=0;let countSheetUsesMasterlist=false;
 const $=id=>document.getElementById(id);
 const localCycleDataKey='fuji-cycle-count-local-data-v1';
 const localCycleHistoryKey='fuji-cycle-count-local-history-v1';
@@ -115,7 +115,99 @@ function renderItems(rebuildView=true){
 }
 function renderGenerated(){const tagSheet=$('tagSheet');tagSheet.innerHTML=items.map((item,index)=>`<article class="count-tag"><div class="tag-header"><strong>LOCATOR: ${item.locator||'UNASSIGNED'}</strong><span class="copy-number">#${item.copy||String(index+1).padStart(3,'0')}</span><span class="prince-logo">prince<small> biscuits</small></span></div><div class="tag-info"><b>SKU: ${item.sku||'—'}</b><b>UPC: ${item.barcode||'—'}</b><strong>${item.description||'UNNAMED ITEM'}</strong></div><div class="tag-barcode"><div class="barcode-lines"></div><span>${item.barcode||'NO BARCODE'}</span></div><div class="count-box">COUNT</div><div class="signoff"><div><b>Counter :</b><span></span></div><div><b>Scanner :</b><span></span></div><div><b>Validator :</b><span></span></div><small>Powered by: DECStudioHub</small></div></article>`).join('')}
 function renderCountSheet(){const groups=items.reduce((result,item)=>{const key=item.supplier||'Unassigned Supplier';(result[key]??=[]).push(item);return result},{});$('countSheetPages').innerHTML=Object.entries(groups).map(([supplier,rows],groupIndex)=>`<article class="count-sheet-page"><header class="sheet-header"><div><h3>COUNT SHEET <span>PHYSICAL INVENTORY</span></h3><p><b>SUPPLIER:</b> ${supplier} &nbsp; <b>STORE:</b> ${$('storeField').value||'Store #14014 - Retail'} &nbsp; <b>DATE:</b> ${$('dateField').value||'2026-09-11'}</p></div><div class="sheet-locator"><b>LOCATORS:</b><strong>${[...new Set(rows.map(row=>row.locator||'—'))].join(', ')}</strong><div class="mini-bars"></div><small>PAGE ${groupIndex+1} OF ${Object.keys(groups).length}</small></div></header><table class="count-sheet-table"><thead><tr><th>#</th><th>SKU</th><th>BARCODE</th><th>DESCRIPTION</th><th>LOCATOR</th><th>COUNT</th></tr></thead><tbody>${rows.map((item,index)=>`<tr><td>${index+1}</td><td>${item.sku||'—'}</td><td><div class="small-barcode"></div><small>${item.barcode||'—'}</small></td><td>${item.description||'—'}</td><td>${item.locator||'—'}</td><td><span class="count-line"></span></td></tr>`).join('')}</tbody></table></article>`).join('');$('countSheetSummary').textContent=`${Object.keys(groups).length} supplier sheets prepared; locators are included on every line.`}
-function loadItems(nextItems,filename='inventory.csv'){inventoryTouchedThisSession=true;items=nextItems;if(typeof resetCombinedPrintStatus==='function')resetCombinedPrintStatus();inventoryPage=1;inventoryViewCache={key:'',indexes:[]};renderItems();if(typeof updateSupplierFilter==='function')updateSupplierFilter();$('dataSummary').textContent=`${items.length} inventory rows imported from ${filename}. Check each row for missing or incorrect values.`;$('resetBtn').hidden=false;showStep(2);if(typeof refreshLayoutPreview==='function')refreshLayoutPreview();persistLocalCycleData('Inventory imported',`${filename} · ${items.length} rows`);toast(`${items.length} inventory rows imported`)}
+function loadItems(nextItems,filename='inventory.csv'){inventoryTouchedThisSession=true;countSheetUsesMasterlist=false;items=nextItems;if(typeof resetCombinedPrintStatus==='function')resetCombinedPrintStatus();inventoryPage=1;inventoryViewCache={key:'',indexes:[]};renderItems();if(typeof updateSupplierFilter==='function')updateSupplierFilter();$('dataSummary').textContent=`${items.length} inventory rows imported from ${filename}. Check each row for missing or incorrect values.`;$('resetBtn').hidden=false;showStep(2);if(typeof refreshLayoutPreview==='function')refreshLayoutPreview();persistLocalCycleData('Inventory imported',`${filename} · ${items.length} rows`);toast(`${items.length} inventory rows imported`)}
+function normalizeCountSheetSku(value){return String(value??'').trim().replace(/\.0$/,'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
+function updateCountSheetCcdFilter(){
+  const filter=$('countSheetCcdFilter');
+  if(!filter)return;
+  const current=filter.value||'all';
+  const values=[...new Set(items.map(item=>String(item.ccdNo||'').trim()).filter(Boolean))].sort((left,right)=>left.localeCompare(right,undefined,{numeric:true}));
+  filter.replaceChildren(new Option('All CCDs','all'),...values.map(value=>new Option(`CCD ${value}`,value)));
+  filter.value=values.includes(current)?current:'all';
+}
+function updateCountSheetCategoryFilter(){
+  const filter=$('countSheetCategoryFilter');
+  if(!filter)return;
+  const current=filter.value;
+  const ccd=$('countSheetCcdFilter').value;
+  const department=$('countSheetDepartmentFilter').value;
+  const supplier=$('supplierFilter').value;
+  const values=[...new Set(items.filter(item=>(ccd==='all'||item.ccdNo===ccd)&&(department==='all'||item.departmentCode===department)&&(supplier==='all'||item.supplier===supplier)).map(item=>String(item.category||item.subdeptName||item.classification||'Uncategorized').trim()||'Uncategorized'))].sort((left,right)=>left.localeCompare(right,undefined,{sensitivity:'base'}));
+  filter.replaceChildren(new Option('Choose category',''),...(values.length>1?[new Option('Mix categories','__mix__')]:[]),...values.map(value=>new Option(value,value)));
+  filter.value=current==='__mix__'&&values.length>1?current:values.includes(current)?current:'';
+}
+function updateCountSheetDepartmentFilter(){
+  const filter=$('countSheetDepartmentFilter');
+  if(!filter)return;
+  const current=filter.value||'all';
+  const ccd=$('countSheetCcdFilter').value;
+  const departments=new Map();
+  items.forEach(item=>{
+    if(ccd!=='all'&&item.ccdNo!==ccd)return;
+    const code=String(item.departmentCode||item.deptCode||'').trim();
+    if(code)departments.set(code,`${code}${item.department?` - ${item.department}`:''}`);
+  });
+  const values=[...departments].sort(([left],[right])=>left.localeCompare(right,undefined,{numeric:true}));
+  filter.replaceChildren(new Option('All departments','all'),...values.map(([value,label])=>new Option(label,value)));
+  filter.value=departments.has(current)?current:'all';
+}
+async function prepareCountSheetMasterlist(){
+  let masterRecords=[];
+  if(typeof window.getActiveMasterlistRecords==='function'){
+    try{masterRecords=await window.getActiveMasterlistRecords()}catch(error){console.warn('Could not read active Masterlist for Count Sheet:',error)}
+  }
+  const masterBySku=new Map();
+  masterRecords.forEach(record=>{
+    const sku=normalizeCountSheetSku(record.sku);
+    if(!sku)return;
+    if(!masterBySku.has(sku))masterBySku.set(sku,[]);
+    masterBySku.get(sku).push(record);
+  });
+  const useMasterlist=countSheetUsesMasterlist||!items.length;
+  const sourceItems=useMasterlist?masterRecords:items;
+  if(!sourceItems.length){items=items.map(item=>({...item,locator:String(item.locator||'').trim()||'UNPRELISTED',barcode:String(item.barcode||'').trim()}));return false}
+  let prepared=sourceItems.map(item=>{
+    const candidates=masterBySku.get(normalizeCountSheetSku(item.sku))||[];
+    const masterRecord=useMasterlist?item:candidates.find(record=>String(record.ccd||record.ccdNo||'').trim()===String(item.ccdNo||item.ccd||'').trim())||candidates[0];
+    const master=masterRecord||item;
+    const locatorSource=masterRecord?(masterRecord.locator??masterRecord.locatorCode):(item.locator??item.locatorCode);
+    const locator=String(locatorSource??'').trim()||'UNPRELISTED';
+    return{
+      ...master,...item,
+      sku:String(item.sku||master.sku||'').trim(),
+      description:String(master.description||master.skuDescription||item.description||'').trim(),
+      supplier:String(item.supplier||master.vendorName||master.supplier||'').trim()||'Unassigned Supplier',
+      vendorName:String(master.vendorName||item.vendorName||item.supplier||'').trim(),
+      locator,
+      barcode:String(master.barcode||item.barcode||'').trim(),
+      departmentCode:String(master.deptCode||master.departmentCode||item.departmentCode||'').trim(),
+      deptCode:String(master.deptCode||master.departmentCode||item.deptCode||'').trim(),
+      department:String(master.department||item.department||'').trim(),
+      subdeptName:String(master.subdeptName||item.subdeptName||'').trim(),
+      classification:String(master.classification||item.classification||'').trim(),
+      ccdNo:String(master.ccd||master.ccdNo||item.ccdNo||item.ccd||'').trim(),
+      category:String(master.subdeptName||master.classification||item.category||'').trim()
+    };
+  });
+  const missingSkus=prepared.filter(item=>!item.barcode&&item.sku).map(item=>item.sku);
+  if(missingSkus.length&&typeof window.lookupProductBarcodesBySku==='function'){
+    try{
+      const barcodes=await window.lookupProductBarcodesBySku(missingSkus);
+      prepared=prepared.map(item=>({...item,barcode:item.barcode||String(barcodes[normalizeCountSheetSku(item.sku)]||'').trim()}));
+    }catch(error){console.warn('Could not resolve Count Sheet barcodes:',error)}
+  }
+  items=prepared.map(item=>({...item,barcode:String(item.barcode||'').trim()}));
+  countSheetUsesMasterlist=useMasterlist;
+  updateCountSheetCcdFilter();
+  updateCountSheetDepartmentFilter();
+  inventoryPage=1;
+  inventoryViewCache={key:'',indexes:[]};
+  renderItems();
+  if(typeof updateSupplierFilter==='function')updateSupplierFilter();
+  updateCountSheetCategoryFilter();
+  $('dataSummary').textContent=`${items.length.toLocaleString()} Count Sheet rows loaded from ${useMasterlist?'the active Masterlist':'inventory and active Masterlist details'}.`;
+  return true;
+}
  const importHeaderAliases={
    supplier:['supplier','supplier name','vendor','vendor name','brand','brand name','principal'],
    locator:['locator','location','bin location','locator code','selling locator'],
@@ -240,10 +332,16 @@ let importInProgress=false;
 $('chooseFile').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>handleFile(e.target.files[0]);$('dropzone').ondragover=e=>{e.preventDefault();$('dropzone').classList.add('dragging')};$('dropzone').ondragleave=()=> $('dropzone').classList.remove('dragging');$('dropzone').ondrop=e=>{e.preventDefault();$('dropzone').classList.remove('dragging');handleFile(e.dataTransfer.files[0])};
 $('sampleBtn').onclick=()=>{const csv='SUPPLIER,LOCATOR,SKU,UPC,DESCRIPTION\\nPrince Retail Group,WH-E-B2L2,18053,480034402053,OLD ENGLISH WHSIRE HT 150ML\\nMabuhay Foods,WH-G-B3L1,19221,480034401227,MANG TOMATO SAUCE 250G';const url=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));const link=document.createElement('a');link.href=url;link.download='PRG_inventory_template.csv';link.click();URL.revokeObjectURL(url);toast('Sample template downloaded')};
 $('searchInput').oninput=null;
+async function refreshCountSheetFromMasterlist(){
+  if(!await prepareCountSheetMasterlist())return;
+  if(typeof renderCountSheet==='function')renderCountSheet();
+  if(typeof refreshLayoutPreview==='function')refreshLayoutPreview();
+}
+['countSheetBtn','goCountSheet','configureSheetBtn'].forEach(id=>$(id).addEventListener('click',refreshCountSheetFromMasterlist));
 let inventorySearchTimer;
 $('searchInput').addEventListener('input',()=>{clearTimeout(inventorySearchTimer);inventoryPage=1;inventorySearchTimer=setTimeout(()=>renderItems(),120)});
 $('sortSelect').onchange=()=>{inventoryPage=1;renderItems()};$('reuploadBtn').onclick=()=>$('fileInput').click();$('backImport').onclick=()=>showStep(1);$('countSheetBtn').onclick=()=>showStep(3);$('backCountData').onclick=()=>showStep(2);$('printSheetBtn').onclick=()=>{toast('Print dialog opened');window.print()};$('exportSheetBtn').onclick=()=>toast('Count sheet PDF export is ready');$('goCountSheet').onclick=()=>{applyLayout();renderCountSheet();Object.values(panels).forEach(panel=>panel.hidden=true);$('countSheetPanel').hidden=false;window.scrollTo({top:0,behavior:'smooth'})};$('generateBtn').onclick=()=>showStep(3);$('backData').onclick=()=>showStep(2);$('goGenerate').onclick=()=>{renderGenerated();showStep(4);$('generatedSummary').textContent=`${items.length} physical count tags prepared for printing.`};$('backConfigure').onclick=()=>showStep(3);$('printBtn').onclick=()=>{toast('Print dialog opened');window.print()};$('pdfBtn').onclick=()=>toast('PDF export is ready to download');
-$('addItemBtn').onclick=()=>{const locator=prompt('Locator (e.g. A-01-01)');if(!locator)return;const sku=prompt('SKU');const description=prompt('Description');const newItem={locator,sku:sku||'NEW',barcode:'',description:description||'New inventory item'};items.push(newItem);inventoryTouchedThisSession=true;inventoryViewCache={key:'',indexes:[]};renderItems();persistLocalCycleData('Item added',`SKU ${newItem.sku} · ${newItem.description} · ${newItem.locator}`);toast('Inventory item added')};
+ $('addItemBtn').onclick=()=>{const locator=prompt('Locator (e.g. A-01-01)');if(!locator)return;const sku=prompt('SKU');const description=prompt('Description');const newItem={locator,sku:sku||'NEW',barcode:'',description:description||'New inventory item'};countSheetUsesMasterlist=false;items.push(newItem);inventoryTouchedThisSession=true;inventoryViewCache={key:'',indexes:[]};renderItems();persistLocalCycleData('Item added',`SKU ${newItem.sku} · ${newItem.description} · ${newItem.locator}`);toast('Inventory item added')};
 document.addEventListener('click',event=>{
   const edit=event.target.closest('.edit-item');
   const remove=event.target.closest('.delete-item');
@@ -251,11 +349,12 @@ document.addEventListener('click',event=>{
     const item=items[Number(edit.dataset.index)];
     const previousDescription=item.description||'';
     const description=prompt('Description',previousDescription);
-    if(description!==null){item.description=description;inventoryTouchedThisSession=true;inventoryViewCache={key:'',indexes:[]};renderItems();persistLocalCycleData('Item edited',`SKU ${item.sku||'—'} · ${previousDescription} -> ${description}`);toast('Item updated')}
+    if(description!==null){countSheetUsesMasterlist=false;item.description=description;inventoryTouchedThisSession=true;inventoryViewCache={key:'',indexes:[]};renderItems();persistLocalCycleData('Item edited',`SKU ${item.sku||'—'} · ${previousDescription} -> ${description}`);toast('Item updated')}
   }
   if(remove){
     const item=items[Number(remove.dataset.index)];
     const removedDetails=item?`SKU ${item.sku||'—'} · ${item.description||''} · ${item.locator||''}`:'Unknown item';
+    countSheetUsesMasterlist=false;
     items.splice(Number(remove.dataset.index),1);
     inventoryTouchedThisSession=true;
     inventoryViewCache={key:'',indexes:[]};
@@ -264,12 +363,18 @@ document.addEventListener('click',event=>{
     toast('Item removed');
   }
 });
+function refreshCountSheetFilterView(){if(typeof renderCountSheet==='function')renderCountSheet();if(typeof refreshLayoutPreview==='function')refreshLayoutPreview()}
+$('countSheetCcdFilter').addEventListener('change',()=>{updateCountSheetDepartmentFilter();if(typeof updateSupplierFilter==='function')updateSupplierFilter();updateCountSheetCategoryFilter();refreshCountSheetFilterView()});
+$('countSheetDepartmentFilter').addEventListener('change',()=>{if(typeof updateSupplierFilter==='function')updateSupplierFilter();updateCountSheetCategoryFilter();refreshCountSheetFilterView()});
+$('supplierFilter').addEventListener('change',()=>{updateCountSheetCategoryFilter();refreshCountSheetFilterView()});
+$('countSheetCategoryFilter').addEventListener('change',refreshCountSheetFilterView);
+$('countSheetSortOrder').addEventListener('change',refreshCountSheetFilterView);
 document.querySelectorAll('.step').forEach(el=>el.onclick=()=>{const step=Number(el.dataset.step);if(step===1||items.length)showStep(step);else toast('Import inventory before continuing')});document.querySelectorAll('.module').forEach(el=>el.onclick=()=>{document.querySelectorAll('.module').forEach(button=>button.classList.remove('active'));el.classList.add('active');toast(`${el.textContent.split(' ')[0]} module selected`)});
 $('settingsBtn').onclick=()=>{$('modalBackdrop').hidden=false};$('closeModal').onclick=()=>{$('modalBackdrop').hidden=true};$('modalBackdrop').onclick=e=>{if(e.target===$('modalBackdrop'))$('modalBackdrop').hidden=true};$('saveSettings').onclick=()=>{$('modalBackdrop').hidden=true;document.documentElement.dataset.accent=$('accentSelect').value;const colors={emerald:'#047857',sapphire:'#1d4ed8',amber:'#b45309'};document.documentElement.style.setProperty('--accent',colors[$('accentSelect').value]);toast('Settings saved')};
 $('creditsBtn').onclick=()=>{$('developersModal').hidden=false};
 $('closeDevelopers').onclick=()=>{$('developersModal').hidden=true};
 $('developersModal').onclick=e=>{if(e.target===$('developersModal'))$('developersModal').hidden=true};
- $('resetBtn').onclick=()=>{const removedCount=items.length;items=[];if(typeof resetCombinedPrintStatus==='function')resetCombinedPrintStatus();inventoryTouchedThisSession=true;inventoryViewCache={key:'',indexes:[]};$('fileInput').value='';$('resetBtn').hidden=true;renderItems();persistLocalCycleData('Inventory cleared',`${removedCount} rows removed`);showStep(1);toast('Session reset')};
+$('resetBtn').onclick=()=>{const removedCount=items.length;countSheetUsesMasterlist=false;items=[];if(typeof resetCombinedPrintStatus==='function')resetCombinedPrintStatus();inventoryTouchedThisSession=true;inventoryViewCache={key:'',indexes:[]};$('fileInput').value='';$('resetBtn').hidden=true;renderItems();persistLocalCycleData('Inventory cleared',`${removedCount} rows removed`);showStep(1);toast('Session reset')};
 $('storeField').value=restoredLocalCycleData.store||'';
 $('dateField').value=restoredLocalCycleData.date||new Date().toISOString().slice(0,10);
 if(items.length){

@@ -14,9 +14,11 @@ function buildCountSheetRows(items){
     const sku=String(item.sku||'').trim();
     const barcode=String(item.barcode||'').trim();
     const description=String(item.description||'').trim();
-    const key=sku?JSON.stringify([supplier,sku.toUpperCase()]):JSON.stringify([supplier,barcode,description.toLowerCase()]);
+    const ccdNo=String(item.ccdNo||item.ccd||'').trim();
+    const category=String(item.category||item.subdeptName||item.classification||'Uncategorized').trim()||'Uncategorized';
+    const key=sku?JSON.stringify([supplier,ccdNo,category,sku.toUpperCase()]):JSON.stringify([supplier,ccdNo,category,barcode,description.toLowerCase()]);
     if(!merged.has(key)){
-      merged.set(key,{supplier,sku,barcode,description, selling:[],buffer:[],warehouse:[]});
+      merged.set(key,{supplier,ccdNo,departmentCode:String(item.departmentCode||item.deptCode||'').trim(),department:String(item.department||'').trim(),category,sku,barcode,description,selling:[],buffer:[],warehouse:[]});
     }
     const row=merged.get(key);
     if(!row.barcode&&barcode)row.barcode=barcode;
@@ -31,6 +33,10 @@ function buildCountSheetRows(items){
 
   return [...merged.values()].map(row=>({
     supplier:row.supplier,
+    ccdNo:row.ccdNo,
+    departmentCode:row.departmentCode,
+    department:row.department,
+    category:row.category,
     sku:row.sku||'—',
     barcode:row.barcode,
     description:row.description||'—',
@@ -91,8 +97,20 @@ function renderCountSheet(previewOnly=false){
   const storeName=escapeSheetText($('storeField').value||'Store #14014 - Retail');
   const editorName=escapeSheetText($('editorName')?.value||'Danne Lozana');
   const selectedSupplier=$('supplierFilter')?.value||'all';
-  const filteredItems=selectedSupplier==='all'?items:items.filter(item=>(item.supplier||'Unassigned Supplier')===selectedSupplier);
+  const selectedCcd=$('countSheetCcdFilter')?.value||'all';
+  const selectedDepartment=$('countSheetDepartmentFilter')?.value||'all';
+  const selectedCategory=$('countSheetCategoryFilter')?.value||'';
+  const mixedCategories=selectedCategory==='__mix__';
+  const filteredItems=selectedCategory?items.filter(item=>(selectedSupplier==='all'||(item.supplier||'Unassigned Supplier')===selectedSupplier)&&(selectedCcd==='all'||String(item.ccdNo||item.ccd||'').trim()===selectedCcd)&&(selectedDepartment==='all'||String(item.departmentCode||item.deptCode||'').trim()===selectedDepartment)&&(mixedCategories||(String(item.category||item.subdeptName||item.classification||'Uncategorized').trim()||'Uncategorized')===selectedCategory)):[];
   const mergedRows=buildCountSheetRows(filteredItems);
+  const sortOrder=$('countSheetSortOrder')?.value||'workbook';
+  if(sortOrder!=='workbook')mergedRows.sort((left,right)=>{
+    const department=left.department.localeCompare(right.department,undefined,{numeric:true,sensitivity:'base'})||left.departmentCode.localeCompare(right.departmentCode,undefined,{numeric:true});
+    const ccd=left.ccdNo.localeCompare(right.ccdNo,undefined,{numeric:true,sensitivity:'base'});
+    if(sortOrder==='department')return department||left.sku.localeCompare(right.sku,undefined,{numeric:true});
+    if(sortOrder==='ccd')return ccd||left.sku.localeCompare(right.sku,undefined,{numeric:true});
+    return department||ccd||left.sku.localeCompare(right.sku,undefined,{numeric:true});
+  });
   const pageRows=Number($('rowsPerPage').value);
   const groupingMode=$('supplierGroupingMode')?.value||'split';
   const selectedCombinedSuppliers=getSelectedCombinedSuppliers();
@@ -138,11 +156,28 @@ function renderCountSheet(previewOnly=false){
   const renderRows=(rows,offset,isCombinedPage)=>{
     const rowEntries=[];
     let currentSupplier='';
+    let currentDepartment='';
+    let currentCcd='';
+    let currentCategory='';
     rows.forEach((item,index)=>{
       const itemSupplier=item.supplier||'Unassigned Supplier';
       if(isCombinedPage && currentSupplier!==itemSupplier){
         rowEntries.push(`<tr class="supplier-group-row"><td colspan="10"><span class="supplier-group-label">${itemSupplier}</span></td></tr>`);
         currentSupplier=itemSupplier;
+      }
+      const departmentKey=`${item.departmentCode} ${item.department}`.trim();
+      const ccdKey=item.ccdNo||'Unassigned';
+      const categoryKey=item.category||'Uncategorized';
+      const groupChanged=(sortOrder==='department'?departmentKey!==currentDepartment:sortOrder==='ccd'?ccdKey!==currentCcd:sortOrder==='department-ccd'?departmentKey!==currentDepartment||ccdKey!==currentCcd:false)||(mixedCategories&&categoryKey!==currentCategory);
+      if(sortOrder!=='workbook'&&groupChanged){
+        const label=[sortOrder==='department'||sortOrder==='department-ccd'?`DEPARTMENT: ${item.department||item.departmentCode||'Unassigned'}`:'',sortOrder==='ccd'||sortOrder==='department-ccd'?`CCD NO.: ${item.ccdNo||'Unassigned'}`:'',mixedCategories?`CATEGORY: ${categoryKey}`:''].filter(Boolean).join(' · ');
+        rowEntries.push(`<tr class="supplier-group-row department-group-row"><td colspan="10"><span class="supplier-group-label">${escapeSheetText(label)}</span></td></tr>`);
+        currentDepartment=departmentKey;
+        currentCcd=ccdKey;
+        currentCategory=categoryKey;
+      }else if(mixedCategories&&categoryKey!==currentCategory){
+        rowEntries.push(`<tr class="supplier-group-row department-group-row"><td colspan="10"><span class="supplier-group-label">CATEGORY: ${escapeSheetText(categoryKey)}</span></td></tr>`);
+        currentCategory=categoryKey;
       }
       const barcode=String(item.barcode||'').trim();
       const barcodeCell=showBarcode?(barcode?`<svg class="scan-barcode" data-barcode="${barcode}"></svg>`:'<span class="barcode-missing">NO BARCODE</span>'):'';
@@ -155,7 +190,7 @@ function renderCountSheet(previewOnly=false){
     <article class="count-sheet-page reference-sheet">
       <header class="reference-sheet-header">
         <div class="reference-title">COUNT SHEET <span>PHYSICAL INVENTORY</span><strong>${groupingMode==='combined' && supplier==='Combined Suppliers' ? 'MULTI-SUPPLIER' : supplier}</strong></div>
-        <div class="reference-meta"><b>STORE:</b> ${storeName} <b>BRANCH:</b> Prince Cauayan</div>
+        <div class="reference-meta"><b>STORE:</b> ${storeName} <b>BRANCH:</b> Prince Cauayan <b>CCD NO.:</b> ${escapeSheetText(selectedCcd==='all'?'ALL':selectedCcd)}</div>
         <div class="reference-meta"><b>SUPPLIER:</b> ${groupingMode==='combined' && supplier==='Combined Suppliers' ? 'MIXED SUPPLIERS' : supplier} <b>DATE:</b> ${$('dateField').value||'2026-09-14'} <b>PREPARED BY:</b> ${editorName}</div>
       </header>
       <table class="count-sheet-table reference-table">
@@ -170,7 +205,7 @@ function renderCountSheet(previewOnly=false){
   const preview=$('countSheetLivePreview');
   if(preview){const firstPage=$('countSheetPages').firstElementChild;preview.innerHTML=firstPage?firstPage.outerHTML:'<div class="live-empty">Import inventory to preview your count sheet.</div>';drawCountSheetBarcodes(preview)}
   const generatedLabel=groupingMode==='combined'?'combined supplier sheets':'supplier sheets';
-  $('countSheetSummary').textContent=groupingMode==='combined'&&!pages.length?'Select at least one unprinted supplier to prepare a count sheet.':`${pages.length} landscape ${generatedLabel} prepared with selling, buffer, and warehouse locator count columns.`;
+  $('countSheetSummary').textContent=!selectedCategory?'Choose a category or Mix categories to prepare count sheets.':groupingMode==='combined'&&!pages.length?'Select at least one unprinted supplier to prepare a count sheet.':`${pages.length} landscape ${generatedLabel}${mixedCategories?' with mixed categories':''} prepared with selling, buffer, and warehouse locator count columns.`;
 }
 
 function drawCountSheetBarcodes(root=document){

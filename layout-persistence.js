@@ -138,14 +138,16 @@ function updateSupplierFilter(){
 	const filter=$('supplierFilter');
 	if(!filter)return;
 	const current=filter.value;
-	const suppliers=getSupplierOptions();
+	const ccd=$('countSheetCcdFilter')?.value||'all';
+	const department=$('countSheetDepartmentFilter')?.value||'all';
+	const suppliers=[...new Set((items||[]).filter(item=>(ccd==='all'||item.ccdNo===ccd)&&(department==='all'||item.departmentCode===department)).map(item=>item.supplier||'Unassigned Supplier'))].sort();
 	filter.innerHTML='<option value="all">All suppliers</option>'+suppliers.map(supplier=>`<option value="${supplier}">${supplier}</option>`).join('');
 	filter.value=suppliers.includes(current)?current:'all';
 	syncSupplierSelectionList();
 	updatePaperUseEstimate();
 }
 updateSupplierFilter();
-$('supplierFilter').addEventListener('change',()=>{renderCountSheet();refreshLayoutPreview()});
+$('supplierFilter').addEventListener('change',()=>{updateCountSheetCategoryFilter();renderCountSheet();refreshLayoutPreview()});
 $('supplierGroupingMode')?.addEventListener('change',()=>{syncSupplierSelectionList();renderCountSheet();refreshLayoutPreview();saveLayoutSettings();});
 
 const rowsSelect=$('rowsPerPage');

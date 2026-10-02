@@ -75,6 +75,25 @@ async function loadProductLookupShard(prefix){
   return records;
 }
 
+async function lookupProductBarcodesBySku(skus){
+  const wanted=new Set(skus.map(normalizeProductSearch).filter(sku=>sku.length>=2));
+  const prefixes=[...new Set([...wanted].map(sku=>sku.slice(0,2)))];
+  const matches={};
+  for(let offset=0;offset<prefixes.length;offset+=8){
+    const batch=prefixes.slice(offset,offset+8);
+    const shards=await Promise.all(batch.map(async prefix=>{
+      try{return await loadProductLookupShard(prefix)}catch(error){console.warn(`Could not load barcode shard ${prefix}:`,error);return []}
+    }));
+    shards.flat().forEach(([sku,barcode])=>{
+      const normalizedSku=normalizeProductSearch(sku);
+      const normalizedBarcode=String(barcode||'').trim();
+      if(wanted.has(normalizedSku)&&normalizedBarcode&&!matches[normalizedSku])matches[normalizedSku]=normalizedBarcode;
+    });
+  }
+  return matches;
+}
+window.lookupProductBarcodesBySku=lookupProductBarcodesBySku;
+
 async function loadProductDescriptionShard(prefix){
   if(productDescriptionCache.has(prefix))return productDescriptionCache.get(prefix);
   const url=new URL(`master-description-index/${encodeURIComponent(prefix)}.json.gz`,document.baseURI);
@@ -284,7 +303,8 @@ function showHomePanel(){
   previousProductLookupView=null;
   renderHomeDashboard();
 }
-function showCountSheetWorkspace(){
+async function showCountSheetWorkspace(){
+  await prepareCountSheetMasterlist();
   if(activeLookupNavigation)activeLookupNavigation.removeAttribute('aria-current');
   productLookupViews.forEach(view=>{view.hidden=true});
   activeLookupPanel=null;
@@ -293,7 +313,10 @@ function showCountSheetWorkspace(){
   homeNavigation.removeAttribute('aria-current');
   countSheetNavigation.setAttribute('aria-current','page');
   if(items.length&&typeof renderCountSheet==='function'){
+    renderItems();
+    if(typeof updateSupplierFilter==='function')updateSupplierFilter();
     renderCountSheet();
+    if(typeof refreshLayoutPreview==='function')refreshLayoutPreview();
     $('countSheetPanel').hidden=false;
   }else{
     $('introRow')?.removeAttribute('hidden');
